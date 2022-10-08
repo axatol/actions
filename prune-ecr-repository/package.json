@@ -1,0 +1,18 @@
+{
+  "name": "@actions/prune-ecr-repository",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "compile": "esbuild --bundle --minify --platform=node --target=node16 --outfile=./index.js ./index.ts"
+  },
+  "dependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/github": "^5.0.3",
+    "@actions/glob": "^0.3.0",
+    "@aws-sdk/client-ecr-public": "^3.121.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.47",
+    "typescript": "^4.8.4"
+  }
+}

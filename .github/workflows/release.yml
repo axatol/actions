@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on:
+      - self-hosted
+
+    concurrency:
+      group: release
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: release
+
+      - name: Sync changes from main
+        run: git reset --hard origin ${{ github.sha }}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Compile actions
+        run: yarn compile
+
+      - name: Release assets
+        run: |
+          git commit -am "Release: $( date +\"%Y-%m-%d-%H%M\" )"
+          git push origin release
