@@ -2,8 +2,7 @@
 
 ## General Purpose
 
-- [`increment-semver`](./increment-semver)
-- TODO `increment-modver`
+- [`increment-semver`](./increment-semver/README.md)
 
 ## AWS
 

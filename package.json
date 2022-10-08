@@ -5,9 +5,11 @@
   "license": "MIT",
   "scripts": {
     "synth": "sst cdk synth -q",
-    "compile": "yarn workspaces run compile"
+    "compile": "yarn workspaces foreach run compile"
   },
   "workspaces": [
-    "increment-semver"
-  ]
+    "increment-semver",
+    "prune-ecr-repository"
+  ],
+  "packageManager": "yarn@3.2.4"
 }
