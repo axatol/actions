@@ -1,0 +1,19 @@
+name: Increment semantic version
+description: Increment semantic version
+
+inputs:
+  version:
+    description: Version to increment
+    required: true
+  field:
+    description: Semantic field, one of "major", "minor", or "patch"
+    required: false
+    default: patch
+
+outputs:
+  next-version:
+    description: Incremented version
+
+runs:
+  using: node16
+  main: index.js

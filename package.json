@@ -1,0 +1,13 @@
+{
+  "name": "actions",
+  "private": true,
+  "repository": "git@github.com:axatol/actions.git",
+  "license": "MIT",
+  "scripts": {
+    "synth": "sst cdk synth -q",
+    "compile": "yarn workspaces run compile"
+  },
+  "workspaces": [
+    "increment-semver"
+  ]
+}
