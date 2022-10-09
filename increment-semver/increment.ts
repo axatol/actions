@@ -1,10 +1,7 @@
 /**
  * Increment a semantic version by given field
- *
- * @param {string} version
- * @param {string} field
  */
-export const increment = (version, field) => {
+export const increment = (version: string, field: string): string => {
   const matcher =
     /^(?<major>[\d]+)\.(?<minor>[\d]+)\.(?<patch>[\d]+)(-(?<label>[a-z]+))?$/;
 
@@ -39,7 +36,7 @@ export const increment = (version, field) => {
     );
   }
 
-  fields[fieldIndex] = selectedField + 1;
+  fields[fieldIndex] = `${selectedField + 1}`;
   const serialised = fields.join(".");
   return `${serialised}${label ? `-${label}` : ""}`;
 };

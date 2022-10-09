@@ -26,15 +26,17 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: yarn
+          cache: npm
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm install
 
       - name: Compile actions
-        run: yarn compile
+        run: npm run compile
 
       - name: Release assets
         run: |
+          git config --global user.email "${{ github.event.pusher.email }}"
+          git config --global user.name "${{ github.event.pusher.name }}"
           git commit -am "Release: $( date +\"%Y-%m-%d-%H%M\" )"
           git push origin release

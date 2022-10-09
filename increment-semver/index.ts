@@ -1,5 +1,5 @@
-const core = require("@actions/core");
-const { increment } = require("./increment");
+import * as core from "@actions/core";
+import { increment } from "./increment";
 
 try {
   const version = core.getInput("version", {
@@ -16,6 +16,6 @@ try {
 
   core.setOutput("next-version", result);
   core.info(`incremented version ${field}, ${version} -> ${result}`);
-} catch (error) {
+} catch (error: any) {
   core.setFailed(error);
 }

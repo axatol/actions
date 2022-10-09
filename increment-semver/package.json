@@ -2,7 +2,14 @@
   "name": "@actions/increment-semver",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "compile": "esbuild --bundle --minify --platform=node --target=node16 --outfile=./index.js ./index.ts"
+  },
   "dependencies": {
     "@actions/core": "^1.10.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.47",
+    "typescript": "^4.8.4"
   }
 }
