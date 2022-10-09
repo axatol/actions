@@ -34,6 +34,13 @@ jobs:
       - name: Compile actions
         run: npm run compile
 
+      - name: Stage release assets
+        run: |
+          workspaces=$( jq -r '.workspaces[]' ./package.json )
+          for workspace in $workspaces; do
+            git add -f '*.js'
+          done
+
       - name: Release assets
         run: |
           git config --global user.email "${{ github.event.pusher.email }}"
