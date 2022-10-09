@@ -18,8 +18,12 @@ jobs:
         with:
           ref: release
 
+      - run: echo $PATH
+
       - name: Sync changes from main
-        run: git reset --hard origin ${{ github.sha }}
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Install dependencies
         run: yarn install
