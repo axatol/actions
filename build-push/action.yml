@@ -1,0 +1,50 @@
+name: Build and Push
+description: Build and push docker image
+
+inputs:
+  registry:
+    description: Registry
+    required: true
+  repository:
+    description: Repository
+    required: true
+  next-tag:
+    description: Next tag
+    required: false
+    default: latest
+  previous-tag:
+    description: Previous tag
+    required: false
+    default: previous
+  tag-previous:
+    description: Whether or not to tag previous image
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+
+  steps:
+    - name: Retrieve last image
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.next-tag }}
+      run: docker pull $IMAGE
+
+    - name: Tag last image
+      if: inputs.tag-previous == 'true'
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.next-tag }}
+        LAST_IMAGE: ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.previous-tag }}
+      run: |
+        docker tag $IMAGE $LAST_IMAGE
+        docker push $LAST_IMAGE
+
+    - name: Build new image
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.next-tag }}
+      run: |
+        docker build --tag $IMAGE --cache-from $IMAGE .
+        docker push $IMAGE
