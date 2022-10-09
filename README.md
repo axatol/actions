@@ -6,6 +6,4 @@
 
 ## AWS
 
-- TODO `download-s3-object`
-- TODO `upload-s3-object`
-- TODO `prune-ecr-repository`
+- [`prune-ecr-repository`](./prune-ecr-repository/README.md)

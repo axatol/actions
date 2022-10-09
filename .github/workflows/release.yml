@@ -18,10 +18,15 @@ jobs:
         with:
           ref: release
 
+      - name: Configure git identity
+        run: |
+          git config --global user.email "${{ github.event.pusher.email }}"
+          git config --global user.name "${{ github.event.pusher.name }}"
+
       - name: Sync changes from main
         run: |
           git fetch origin main
-          git reset --hard origin/main
+          git merge -X theirs --no-ff --allow-unrelated-histories origin/main
 
       - uses: actions/setup-node@v3
         with:
@@ -34,9 +39,14 @@ jobs:
       - name: Compile actions
         run: npm run compile
 
+      - name: Stage release assets
+        run: |
+          workspaces=$( jq -rM '.workspaces[]' ./package.json )
+          for workspace in $workspaces; do
+            git add -f "$workspace/*.js"
+          done
+
       - name: Release assets
         run: |
-          git config --global user.email "${{ github.event.pusher.email }}"
-          git config --global user.name "${{ github.event.pusher.name }}"
           git commit -am "Release: $( date +\"%Y-%m-%d-%H%M\" )"
           git push origin release
