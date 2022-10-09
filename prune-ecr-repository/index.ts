@@ -8,9 +8,7 @@ import {
 } from "@aws-sdk/client-ecr-public";
 
 const shortImageId = (id?: ImageIdentifier) => {
-  const digest = id?.imageDigest
-    ? `${id.imageDigest.slice(0, 4)}...${id.imageDigest.slice(-4)}`
-    : "unknown";
+  const digest = id?.imageDigest ? `${id.imageDigest.slice(0, 8)}` : "unknown";
   const tag = id?.imageTag ?? "unknown";
   return `${digest}:${tag}`;
 };
@@ -73,12 +71,12 @@ const shortImageId = (id?: ImageIdentifier) => {
       ],
       ...(response.imageIds ?? []).map((id) => [
         "✓",
-        shortImageId(id),
+        `\`${shortImageId(id)}\``,
         "deleted",
       ]),
       ...(response.failures ?? []).map((id) => [
         "✗",
-        shortImageId(id.imageId),
+        `\`${shortImageId(id.imageId)}\``,
         `${id.failureCode ?? "?"} - ${id.failureReason ?? "?"}`,
       ]),
     ])

@@ -5,7 +5,7 @@ Increments a semantic version formatted string by the selected field.
 ## Usage
 
 ```yaml
-- uses: axatol/actions/increment-semver
+- uses: axatol/actions/increment-semver@release
   with:
     # String in the format `major.minor.patch`
     # optionally with a label, e.g. `-pre-release`
@@ -17,12 +17,16 @@ Increments a semantic version formatted string by the selected field.
     field: ""
 ```
 
+### Outputs
+
+- `next-version`: Incremented version
+
 ## Examples
 
 ### Increment a version patch field
 
 ```yaml
-- uses: axatol/actions/increment-semver
+- uses: axatol/actions/increment-semver@release
   id: next
   with:
     version: 1.0.0
@@ -36,7 +40,7 @@ Increments a semantic version formatted string by the selected field.
 ### Increment a version major field
 
 ```yaml
-- uses: axatol/actions/increment-semver
+- uses: axatol/actions/increment-semver@release
   id: next
   with:
     version: 1.0.0
