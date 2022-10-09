@@ -18,12 +18,15 @@ jobs:
         with:
           ref: release
 
-      - run: echo $PATH
-
       - name: Sync changes from main
         run: |
           git fetch origin main
           git reset --hard origin/main
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: yarn
 
       - name: Install dependencies
         run: yarn install
