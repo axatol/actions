@@ -20,6 +20,10 @@ inputs:
     description: Whether or not to tag previous image
     required: false
     default: 'true'
+  build-args:
+    description: Additional arguments to pass to build command
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -46,5 +50,5 @@ runs:
       env:
         IMAGE: ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.next-tag }}
       run: |
-        docker build --tag $IMAGE --cache-from $IMAGE .
+        docker build --tag $IMAGE --cache-from $IMAGE ${{ inputs.build-args }} .
         docker push $IMAGE
