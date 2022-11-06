@@ -6,9 +6,18 @@ on:
       - main
 
 jobs:
+  test:
+    concurrency:
+      group: test
+
+    uses: ./.github/workflows/_test-docker.yml
+
   release:
     runs-on:
       - self-hosted
+
+    needs:
+      - test
 
     concurrency:
       group: release
