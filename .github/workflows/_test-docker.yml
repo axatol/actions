@@ -11,7 +11,7 @@ jobs:
 
       - uses: ./docker-build-push
         with:
-          image: busybox
+          image: axatol/test
           build-args: -f ./docker-build-push/Dockerfile.test
           use-cache: false
           dry-run: true
@@ -25,7 +25,7 @@ jobs:
 
       - uses: ./docker-build-push
         with:
-          image: busybox
+          image: axatol/test
           build-args: -f ./docker-build-push/Dockerfile.test
           tag-previous: false
           dry-run: true
