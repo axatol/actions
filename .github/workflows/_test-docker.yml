@@ -1,8 +1,5 @@
 on:
-  push:
-    paths:
-      - './.github/workflow/_test_build-push.yml'
-      - './build-push/**'
+  workflow_call:
 
 jobs:
   test-docker-build-push-no-use-cache:
