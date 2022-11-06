@@ -10,7 +10,7 @@ jobs:
     concurrency:
       group: test
 
-    uses: ./.github/workflows/_test_docker.yml
+    uses: ./.github/workflows/_test-docker.yml
 
   release:
     runs-on:
