@@ -1,0 +1,32 @@
+on:
+  push:
+    paths:
+      - './.github/workflow/_test_build-push.yml'
+      - './build-push/**'
+
+jobs:
+  test-docker-build-push-no-use-cache:
+    runs-on:
+      - self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./docker-build-push
+        with:
+          image: busybox
+          use-cache: false
+          dry-run: true
+
+  test-docker-build-push-no-tag-previous:
+    runs-on:
+      - self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./docker-build-push
+        with:
+          image: busybox
+          tag-previous: false
+          dry-run: true
