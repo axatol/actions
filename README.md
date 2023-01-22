@@ -6,8 +6,9 @@
 
 ## AWS
 
-- [`prune-ecr-repository`](./prune-ecr-repository/README.md)
+- `prune-ecr-repository` [readme](./prune-ecr-repository/README.md)
 
 ## Docker
 
-- [`build-push`](./build-push/README.md)
+- DEPRECATED `build-push` [readme](./build-push/README.md)
+- `docker-build-push` [readme](./docker-build-push/README.md)

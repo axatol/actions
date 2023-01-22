@@ -16,23 +16,23 @@ inputs:
   tag-previous:
     description: Whether or not to tag previous image
     required: false
-    default: 'true'
+    default: "true"
   use-cache:
     description: Whether or not to use the previous image as cache
     required: false
-    default: 'true'
+    default: "true"
   build-args:
     description: Additional arguments to pass to build command
     required: false
-    default: ''
+    default: ""
   build-context:
     description: Docker build context
     required: false
-    default: '.'
+    default: "."
   dry-run:
     description: Do not push anything
     required: false
-    default: 'false'
+    default: "false"
 
 runs:
   using: composite
@@ -53,6 +53,7 @@ runs:
     - name: Push last image
       if: inputs.tag-previous == 'true' && inputs.dry-run != 'true'
       shell: bash
+      continue-on-error: true
       run: docker push ${{ inputs.image }}:${{ inputs.previous-tag }}
 
     - name: Build new image
