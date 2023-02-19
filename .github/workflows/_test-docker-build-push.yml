@@ -2,7 +2,7 @@ on:
   workflow_call:
 
 jobs:
-  test-docker-build-push-no-use-cache:
+  test-no-use-cache:
     runs-on:
       - self-hosted
 
@@ -16,7 +16,7 @@ jobs:
           use-cache: false
           dry-run: true
 
-  test-docker-build-push-no-tag-previous:
+  test-no-tag-previous:
     runs-on:
       - self-hosted
 
