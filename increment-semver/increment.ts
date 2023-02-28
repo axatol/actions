@@ -3,7 +3,7 @@
  */
 export const increment = (version: string, field: string): string => {
   const matcher =
-    /^(?<major>[\d]+)\.(?<minor>[\d]+)\.(?<patch>[\d]+)(-(?<label>[a-z]+))?$/;
+    /^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(-(?<label>[0-9A-Za-z-]+))?$/;
 
   const matches = version.match(matcher);
   if (!matches || !matches.groups) {
@@ -17,7 +17,7 @@ export const increment = (version: string, field: string): string => {
       `minor: "${minor}"`,
       `patch: "${patch}"`,
       `label: "${label}"`,
-    ];
+    ].join(", ");
     throw new Error(`could not extract all fields out of version, ${labelled}`);
   }
 
