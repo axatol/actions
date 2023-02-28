@@ -15,19 +15,11 @@ const shortImageId = (id?: ImageIdentifier) => {
 
 (async () => {
   const region = core.getInput("aws-region");
-  const accessKeyId = core.getInput("aws-access-key-id");
-  const secretAccessKey = core.getInput("aws-secret-access-key");
-  const repositoryName = core.getInput("repository-name");
+  const repositoryName = core.getInput("repository-name", { required: true });
 
-  const client = new ECRPUBLICClient({
-    region,
-    credentials: { accessKeyId, secretAccessKey },
-  });
+  const client = new ECRPUBLICClient({ region });
 
-  const paginator = paginateDescribeImages(
-    { client },
-    { repositoryName: repositoryName }
-  );
+  const paginator = paginateDescribeImages({ client }, { repositoryName });
 
   const images: ImageDetail[] = [];
   for await (const page of paginator) {

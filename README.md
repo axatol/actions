@@ -2,13 +2,12 @@
 
 ## General Purpose
 
-- [`increment-semver`](./increment-semver/README.md)
+- `axatol/actions/increment-semver@release` [readme](./increment-semver)
 
 ## AWS
 
-- `prune-ecr-repository` [readme](./prune-ecr-repository/README.md)
+- `axatol/actions/prune-ecr-repository@release` [readme](./prune-ecr-repository)
 
 ## Docker
 
-- DEPRECATED `build-push` [readme](./build-push/README.md)
-- `docker-build-push` [readme](./docker-build-push/README.md)
+- `axatol/actions/docker-build-push@release` [readme](./docker-build-push)
