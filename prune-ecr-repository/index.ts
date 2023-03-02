@@ -17,7 +17,7 @@ const shortImageId = (id?: ImageIdentifier) => {
   const region = core.getInput("aws-region");
   const repositoryName = core
     .getInput("repository-name", { required: true })
-    .replace(/^public\.ecr\.aws\//, "");
+    .replace(/^public\.ecr\.aws\/[a-z0-9-_]+\//i, "");
 
   const client = new ECRPUBLICClient({ region });
 
