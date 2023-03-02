@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.9.0",
-    "@aws-sdk/client-ecr-public": "^3.121.0"
+    "@aws-sdk/client-ecr-public": "^3.282.0"
   },
   "devDependencies": {
     "esbuild": "^0.14.47",
