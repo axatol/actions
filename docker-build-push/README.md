@@ -1,4 +1,4 @@
-# build-push
+# docker-build-push
 
 Builds and pushes a docker image, optionally tagging the previous image.
 
@@ -19,11 +19,11 @@ Builds and pushes a docker image, optionally tagging the previous image.
     previous-tag: ""
 
     # Whether or not to tag previous image
-    # Defaults to 'true'
+    # Defaults to 'false'
     tag-previous: ""
 
     # Whether or not to use the previous image as cache
-    # Defaults to 'true'
+    # Defaults to 'false'
     use-cache: ""
 
     # Additional arguments to pass to build command

@@ -16,11 +16,11 @@ inputs:
   tag-previous:
     description: Whether or not to tag previous image
     required: false
-    default: "true"
+    default: "false"
   use-cache:
     description: Whether or not to use the previous image as cache
     required: false
-    default: "true"
+    default: "false"
   build-args:
     description: Additional arguments to pass to build command
     required: false
