@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - master
     paths-ignore:
       - "actions-runner/**"
       - "**/README.md"
@@ -35,10 +35,10 @@ jobs:
           git config --global user.email "${{ github.event.pusher.email }}"
           git config --global user.name "${{ github.event.pusher.name }}"
 
-      - name: Sync changes from main
+      - name: Sync changes from master
         run: |
-          git fetch origin main
-          git merge -X theirs --no-ff --allow-unrelated-histories origin/main
+          git fetch origin master
+          git merge -X theirs --no-ff --allow-unrelated-histories origin/master
 
       - uses: actions/setup-node@v3
         with:
