@@ -7,8 +7,8 @@ import {
   ImageDetail,
 } from "@aws-sdk/client-ecr-public";
 
-const shortImageId = (id?: ImageIdentifier) => {
-  const digest = id?.imageDigest ? `${id.imageDigest.slice(0, 8)}` : "unknown";
+const imageStr = (id?: ImageIdentifier) => {
+  const digest = id?.imageDigest ?? "unknown";
   const tag = id?.imageTag ?? "unknown";
   return `${digest}:${tag}`;
 };
@@ -30,7 +30,7 @@ const shortImageId = (id?: ImageIdentifier) => {
     }
   }
 
-  core.info(`✓ fetched images: ${images.length}`);
+  core.info(`✓ fetched ${images.length} images`);
 
   const dangling = images.filter(
     (image) => !image.imageTags || image.imageTags.length < 1
@@ -41,7 +41,7 @@ const shortImageId = (id?: ImageIdentifier) => {
     return;
   }
 
-  core.info(`attempting to remove: ${dangling.length} images`);
+  core.info(`ℹ︎ attempting to remove ${dangling.length} images`);
 
   const response = await client
     .send(new BatchDeleteImageCommand({ repositoryName, imageIds: dangling }))
@@ -65,12 +65,12 @@ const shortImageId = (id?: ImageIdentifier) => {
       ],
       ...(response.imageIds ?? []).map((id) => [
         "✓",
-        `\`${shortImageId(id)}\``,
+        `<pre>${imageStr(id)}</pre>`,
         "deleted",
       ]),
       ...(response.failures ?? []).map((id) => [
         "✗",
-        `\`${shortImageId(id.imageId)}\``,
+        `\`${imageStr(id.imageId)}\``,
         `${id.failureCode ?? "?"} - ${id.failureReason ?? "?"}`,
       ]),
     ])
