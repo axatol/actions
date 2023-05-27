@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "actions-runner/**"
+      - "**/README.md"
 
 jobs:
   test:
