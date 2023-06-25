@@ -49,6 +49,7 @@ runs:
 
     - shell: bash
       run: |
+        echo "downloading from: ${{ steps.get-release.outputs.download-url }}"
         mkdir -p ${{ runner.temp }}/hugo \
         && curl -Lo ./hugo.tar.gz ${{ steps.get-release.outputs.download-url }} \
         && tar -xzf ./hugo.tar.gz --directory ${{ runner.temp }}/hugo \
