@@ -8,6 +8,7 @@
     "compile": "npm --workspaces run --if-present compile"
   },
   "workspaces": [
+    "aws-cdk-summarise-diff",
     "increment-semver",
     "prune-ecr-repository"
   ]

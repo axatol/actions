@@ -1,0 +1,49 @@
+name: Diff CDK
+description: Generate diff and comment on PR
+
+inputs:
+  role-arn:
+    description: Role ARN to use for lookups
+    required: false
+    default: ""
+  diff-command:
+    description: AWS CDK diff command
+    required: false
+    default: npx cdk diff --ci
+
+runs:
+  using: composite
+
+  steps:
+    - if: inputs.role-arn != ""
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ inputs.role-arn }}
+        role-session-name: ${{ github.triggering_actor }}@${{ github.repository_owner }}@${{ github.event.repository.name }}@${{ github.job }}@${{ github.run_id }}
+        role-skip-session-tagging: true
+        role-duration-seconds: 3600
+
+    - shell: bash
+      run: |
+        output=$( ${{ inputs.diff-command }} )
+        echo "DIFF_OUTPUT<<EOF" >> $GITHUB_ENV
+        echo "$output" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+        echo "::group::CDK Diff"
+        echo $output
+        echo "::endGroup::"
+
+    - shell: bash
+      id: summarise
+      uses: actions/github-script@v6
+      with:
+        script: |
+          require("${{ github.action_path }}/index.js")({
+            github,
+            core,
+            context,
+            actor: "${{ github.actor }}",
+            eventName: "${{ github.event_name }}",
+            workflow: "${{ github.workflow }}",
+          })
