@@ -1,11 +1,11 @@
-# aws-ssm-get-parameter
+# get-ssm-parameter
 
 Get and obscures an AWS SSM parameter
 
 ## Usage
 
 ```yaml
-- uses: axatol/actions/aws-ssm-get-parameter@release
+- uses: axatol/actions/get-ssm-parameter@release
   with:
     # Parameter path
     path: /path/to/parameter
@@ -21,7 +21,7 @@ Get and obscures an AWS SSM parameter
 
 ```yaml
 - id: get-token
-  uses: axatol/actions/aws-ssm-get-parameter@release
+  uses: axatol/actions/get-ssm-parameter@release
   with:
     path: /infrastructure/github/token
 

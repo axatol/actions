@@ -18,7 +18,7 @@ runs:
       run: |
         value=$(
           aws ssm get-parameter \
-            --name "" \
+            --name "${{ inputs.path }}" \
             --with-decryption \
             --query "Parameter.Value" \
             --output text
