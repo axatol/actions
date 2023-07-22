@@ -13,7 +13,7 @@ inputs:
 outputs:
   value:
     description: Parameter value
-    value: ${{ steps.value.output.value }}
+    value: ${{ steps.value.outputs.value }}
 
 runs:
   using: composite
