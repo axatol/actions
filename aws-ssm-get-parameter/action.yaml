@@ -1,0 +1,28 @@
+name: Get AWS SSM parameter
+description: Get and obscures an AWS SSM parameter
+
+inputs:
+  path:
+    description: Parameter path
+
+outputs:
+  value:
+    description: Parameter value
+    value: ${{ steps.value.output.value }}
+
+runs:
+  using: composite
+  steps:
+    - id: value
+      shell: bash
+      run: |
+        value=$(
+          aws ssm get-parameter \
+            --name "" \
+            --with-decryption \
+            --query "Parameter.Value" \
+            --output text
+        )
+
+        echo "::add-mask::${value}"
+        echo "value=${value}" >> $GITHUB_OUTPUT

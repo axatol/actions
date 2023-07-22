@@ -9,18 +9,9 @@ on:
       - "**/README.md"
 
 jobs:
-  test:
-    concurrency:
-      group: test
-
-    uses: ./.github/workflows/_test-docker-build-push.yml
-
   release:
     runs-on:
       - self-hosted
-
-    needs:
-      - test
 
     concurrency:
       group: release

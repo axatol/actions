@@ -13,6 +13,7 @@ RUN sudo apt-get update \
   jq \
   less \
   libssl-dev \
+  net-tools \
   openssl \
   xz-utils \
   && sudo apt-get clean \
