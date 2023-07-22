@@ -5,6 +5,11 @@ inputs:
   path:
     description: Parameter path
 
+  output-env-name:
+    description: Name of environment variable to export the value
+    required: false
+    default: ""
+
 outputs:
   value:
     description: Parameter value
@@ -26,3 +31,7 @@ runs:
 
         echo "::add-mask::${value}"
         echo "value=${value}" >> $GITHUB_OUTPUT
+
+    - if: inputs.output-env-name != ''
+      shell: bash
+      run: echo "${{ inputs.output-env-name }}=${{ steps.value.output.value }}" >> $GITHUB_ENV
