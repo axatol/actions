@@ -9,6 +9,9 @@ Get and obscures an AWS SSM parameter
   with:
     # Parameter path
     path: /path/to/parameter
+
+    # Name of environment variable to export the value
+    env-name: TF_VAR_my_var
 ```
 
 ### Outputs
@@ -28,4 +31,16 @@ Get and obscures an AWS SSM parameter
 - uses: actions/checkout@v3
   with:
     token: ${{ steps.get-token.outputs.value }}
+```
+
+### Export to environment
+
+```yaml
+- id: get-var
+  uses: axatol/actions/get-ssm-parameter@release
+  with:
+    path: /infrastructure/terraform/api_key
+    env-name: TF_VAR_api_key
+
+- run: terraform plan
 ```
