@@ -7,6 +7,7 @@
 
 ## AWS
 
+- `axatol/actions/get-ssm-parameter@release` - [more](./get-ssm-parameter)
 - `axatol/actions/prune-ecr-repository@release` - [more](./prune-ecr-repository)
 
 ## Docker
