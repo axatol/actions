@@ -32,6 +32,6 @@ runs:
         echo "::add-mask::${value}"
         echo "value=${value}" >> $GITHUB_OUTPUT
 
-    - if: inputs.env-name != ''
-      shell: bash
-      run: echo "${{ inputs.env-name }}=${{ steps.value.output.value }}" >> $GITHUB_ENV
+        if [[ "${{ inputs.env-name }}" != ""]]; then
+          echo "${{ inputs.env-name }}=${{ steps.value.output.value }}" >> $GITHUB_ENV
+        fi
