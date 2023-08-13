@@ -51,15 +51,15 @@ runs:
       shell: bash
       run: |
         commit=${{ github.sha }}
-        [[ -z "${{ inputs.commit }}" ]] && commit=${{ inputs.commit }}
+        [[ -z "${{ inputs.commit }}" ]] || commit=${{ inputs.commit }}
         echo "commit=${commit}" | tee -a $GITHUB_OUTPUT
 
         version="$( date +"%Y%m%d.%H%M%S" ).${commit:0:7}"
-        [[ -z "${{ inputs.version }}" ]] && version=${{ inputs.version }}
+        [[ -z "${{ inputs.version }}" ]] || version=${{ inputs.version }}
         echo "version=${version}" | tee -a $GITHUB_OUTPUT
 
         guid="${{ steps.guid-search.outputs.guid }}"
-        [[ -z "${{ inputs.guid }}" ]] && guid=${{ inputs.guid }}
+        [[ -z "${{ inputs.guid }}" ]] || guid=${{ inputs.guid }}
         echo "guid=${guid}" | tee -a $GITHUB_OUTPUT
 
     - name: Create deployment marker
@@ -71,3 +71,5 @@ runs:
         guid: ${{ steps.params.outputs.guid }}
         version: ${{ steps.params.outputs.version }}
         commit: ${{ steps.params.outputs.commit }}
+        deploymenttype: ROLLING
+        user: ${{ github.actor }}

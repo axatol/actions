@@ -18,13 +18,15 @@ query ($name: String, $type: EntitySearchQueryBuilderType, $domain: EntitySearch
 
 interface Response {
   errors?: { message: string }[];
-  actor?: {
-    entitySearch?: {
-      results?: {
-        entities: {
-          guid: string;
-          name: string;
-        }[];
+  data?: {
+    actor?: {
+      entitySearch?: {
+        results?: {
+          entities: {
+            guid: string;
+            name: string;
+          }[];
+        };
       };
     };
   };
@@ -53,7 +55,7 @@ interface Response {
   });
 
   const data = (await response.json()) as Response;
-  console.log(JSON.stringify(data));
+  console.log(JSON.stringify({ status: response.status, data }));
 
   if (data.errors) {
     data.errors.forEach((error) => core.error(error.message));
@@ -61,7 +63,7 @@ interface Response {
     return;
   }
 
-  const entities = data?.actor?.entitySearch?.results?.entities ?? [];
+  const entities = data?.data?.actor?.entitySearch?.results?.entities ?? [];
 
   // first guid
   core.setOutput("count", entities.length);
