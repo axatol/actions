@@ -1,0 +1,62 @@
+name: Create newrelic deployment
+description: Create newrelic deployment
+
+inputs:
+  name:
+    description: Application name, used to find GUID if not provided
+    required: true
+
+  api-key:
+    description: New Relic api key
+    required: true
+
+  guid:
+    description: New Relic entity GUID
+    required: false
+    default: ""
+
+  commit:
+    description: Commit SHA
+    required: false
+    default: ""
+
+  version:
+    description: Release version
+    required: false
+    default: ""
+
+  deployment-type:
+    description: Deployment type
+    required: false
+
+runs:
+  using: composite
+
+  steps:
+    - name: Determine parameters
+      id: params
+      shell: bash
+      run: |
+        commit=${{ github.sha }}
+        [[ -z "${{ inputs.commit }}" ]] && commit=${{ inputs.commit }}
+        echo "commit=${commit}" >> $GITHUB_OUTPUT
+
+        version="$( date +"%Y%m%d.%H%M%S" ).${commit:0:7}"
+        [[ -z "${{ inputs.version }}"]] && version=${{ inputs.version }}
+
+    - name: Get entity GUID
+      id: guid-search
+      if: inputs.guid == ""
+      uses: axatol/actions/search-new-relic-entity-guid@release
+      with:
+        name: ${{ inputs.name }}
+        api-key: ${{ inputs.api-key }}
+
+    - name: Create deployment marker
+      uses: newrelic/deployment-marker-action@v2.4.0
+      with:
+        guid: ${{ inputs.guid != "" && inputs.guid || steps.guid-search.outputs.guid }}
+        apiKey: ${{ inputs.api-key }}
+        deeplink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.job }}
+        version: ${{ steps.params.outputs.version }}
+        commit: ${{ steps.params.outputs.commit }}
