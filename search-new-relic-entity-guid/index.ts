@@ -17,7 +17,9 @@ query ($name: String, $type: EntitySearchQueryBuilderType, $domain: EntitySearch
 `;
 
 interface Response {
-  errors?: { message: string }[];
+  errors?: {
+    message: string;
+  }[];
   data?: {
     actor?: {
       entitySearch?: {
