@@ -1,0 +1,84 @@
+name: Rollout Kubernetes Depoloyment
+description: Rollout Kubernetes Depoloyment
+
+inputs:
+  namespace:
+    description: Deployment namespace
+    required: true
+
+  deployment-name:
+    description: Deployment name
+    required: true
+
+  wait:
+    description: Waits for old pods to terminate
+    required: false
+    default: "false"
+
+  wait-timeout:
+    description: How long to wait for each pod to terminate
+    required: false
+    default: "300s"
+
+outputs:
+  selectors:
+    description: Pod selectors for use with kubectl
+    value: ${{ steps.selectors.outputs.selectors }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: selectors
+      shell: bash
+      env:
+        namespace: ${{ inputs.namespace }}
+        deployment_name: ${{ inputs.deployment-name }}
+      run: |
+        selectors=$(
+          kubectl get deployment.apps/${deployment_name} \
+            --namespace ${namespace}  \
+            --output jsonpath='{.spec.selector.matchLabels}' \
+            | jq \
+              --raw-output \
+              '[ keys[] as $k | "\($k)=\(.[$k])" ] | join(",")'
+        )
+
+        echo "selectors=${selectors}" >> $GITHUB_OUTPUT
+
+    - id: existing
+      shell: bash
+      env:
+        namespace: ${{ inputs.namespace }}
+        deployment_name: ${{ inputs.deployment-name }}
+      run: |
+        pods=$(
+          kubectl get pods \
+            --namespace $namespace \
+            --selectors $selectors \
+            --output jsonpath='{.items.*.metadata.name}' )
+        )
+
+        echo "pods=${pods}" >> $GITHUB_OUTPUT
+
+    - shell: bash
+      env:
+        namespace: ${{ inputs.namespace }}
+        deployment_name: ${{ inputs.deployment-name }}
+      run: |
+        kubectl rollout restart deployment.apps/${deployment_name} --namespace $namespace
+        kubectl rollout status deployment.apps/${deployment_name} --namespace $namespace
+
+    - shell: bash
+      if: inputs.wait == 'true'
+      env:
+        namespace: ${{ inputs.namespace }}
+        pods: ${{ steps.existing.outputs.pods }}
+        timeout: ${{ inputs.wait-timeout }}
+      run: |
+        for pod in ${pods}; do
+          kubectl wait pod/$pod \
+            --for=delete \
+            --namespace ${namespace} \
+            --timeout ${timeout}
+        done
