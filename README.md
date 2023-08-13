@@ -13,3 +13,7 @@
 ## Docker
 
 - `axatol/actions/docker-build-push@release` - [more](./docker-build-push)
+
+## Kubernetes
+
+- `axatol/actions/rollout-kubernetes-deployment@release` - [more](./rollout-kubernetes-deployment)
