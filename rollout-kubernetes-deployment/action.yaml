@@ -56,7 +56,7 @@ runs:
           kubectl get pods \
             --namespace $namespace \
             --selector $selectors \
-            --output jsonpath='{.items.*.metadata.name}' )
+            --output jsonpath='{.items.*.metadata.name}'
         )
 
         echo "pods=${pods}" >> $GITHUB_OUTPUT
