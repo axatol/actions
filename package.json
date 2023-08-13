@@ -9,6 +9,7 @@
   },
   "workspaces": [
     "increment-semver",
-    "prune-ecr-repository"
+    "prune-ecr-repository",
+    "search-new-relic-entity-guid"
   ]
 }
