@@ -29,12 +29,11 @@ jobs:
       - name: Sync changes from master
         run: |
           git fetch origin master
-          git merge -X theirs --no-ff --allow-unrelated-histories origin/master
+          git merge --strategy-option theirs --no-ff --allow-unrelated-histories origin/master
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
-          cache: npm
+          node-version-file: .nvmrc
 
       - name: Install dependencies
         run: npm install

@@ -29,7 +29,8 @@ runs:
   using: composite
 
   steps:
-    - id: selectors
+    - name: Retrieve pod selectors
+      id: selectors
       shell: bash
       env:
         namespace: ${{ inputs.namespace }}
@@ -46,30 +47,33 @@ runs:
 
         echo "selectors=${selectors}" >> $GITHUB_OUTPUT
 
-    - id: existing
+    - name: Find existing pods
+      id: existing
       shell: bash
       env:
         namespace: ${{ inputs.namespace }}
-        deployment_name: ${{ inputs.deployment-name }}
+        selectors: ${{ steps.selectors.outputs.selectors }}
       run: |
         pods=$(
           kubectl get pods \
-            --namespace $namespace \
-            --selector $selectors \
+            --namespace ${namespace} \
+            --selector ${selectors} \
             --output jsonpath='{.items.*.metadata.name}'
         )
 
         echo "pods=${pods}" >> $GITHUB_OUTPUT
 
-    - shell: bash
+    - name: Restart deployment
+      shell: bash
       env:
         namespace: ${{ inputs.namespace }}
         deployment_name: ${{ inputs.deployment-name }}
       run: |
-        kubectl rollout restart deployment.apps/${deployment_name} --namespace $namespace
-        kubectl rollout status deployment.apps/${deployment_name} --namespace $namespace
+        kubectl rollout restart deployment.apps/${deployment_name} --namespace ${namespace}
+        kubectl rollout status deployment.apps/${deployment_name} --namespace ${namespace}
 
-    - shell: bash
+    - name: Wait for old pod termination
+      shell: bash
       if: inputs.wait == 'true'
       env:
         namespace: ${{ inputs.namespace }}
@@ -77,7 +81,7 @@ runs:
         timeout: ${{ inputs.wait-timeout }}
       run: |
         for pod in ${pods}; do
-          kubectl wait pod/$pod \
+          kubectl wait pod/${pod} \
             --for=delete \
             --namespace ${namespace} \
             --timeout ${timeout}
