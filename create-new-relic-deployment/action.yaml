@@ -51,7 +51,7 @@ runs:
 
     - name: Get entity GUID
       id: guid-search
-      if: inputs.guid == ""
+      if: inputs.guid == ''
       uses: axatol/actions/search-new-relic-entity-guid@release
       with:
         name: ${{ inputs.name }}
@@ -61,7 +61,7 @@ runs:
       id: deployment-marker
       uses: newrelic/deployment-marker-action@v2.4.0
       with:
-        guid: ${{ inputs.guid != "" && inputs.guid || steps.guid-search.outputs.guid }}
+        guid: ${{ inputs.guid != '' && inputs.guid || steps.guid-search.outputs.guid }}
         apiKey: ${{ inputs.api-key }}
         deeplink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.job }}
         version: ${{ steps.params.outputs.version }}
