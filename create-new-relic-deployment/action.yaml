@@ -47,7 +47,8 @@ runs:
         echo "commit=${commit}" >> $GITHUB_OUTPUT
 
         version="$( date +"%Y%m%d.%H%M%S" ).${commit:0:7}"
-        [[ -z "${{ inputs.version }}"]] && version=${{ inputs.version }}
+        [[ -z "${{ inputs.version }}" ]] && version=${{ inputs.version }}
+        echo "version=${version}" >> $GITHUB_OUTPUT
 
     - name: Get entity GUID
       id: guid-search
