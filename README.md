@@ -17,3 +17,8 @@
 ## Kubernetes
 
 - `axatol/actions/rollout-kubernetes-deployment@release` - [more](./rollout-kubernetes-deployment)
+
+## New Relic
+
+- `axatol/actions/create-new-relic-deployment@release` - [more](./create-new-relic-deployment)
+- `axatol/actions/search-new-relic-entity-guid@release` - [more](./search-new-relic-entity-guid)
