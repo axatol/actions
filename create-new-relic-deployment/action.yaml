@@ -29,6 +29,11 @@ inputs:
     description: Deployment type
     required: false
 
+outputs:
+  deployment-id:
+    description: Deployment marker ID
+    value: ${{ steps.deployment-marker.outputs.deploymentId }}
+
 runs:
   using: composite
 
@@ -53,6 +58,7 @@ runs:
         api-key: ${{ inputs.api-key }}
 
     - name: Create deployment marker
+      id: deployment-marker
       uses: newrelic/deployment-marker-action@v2.4.0
       with:
         guid: ${{ inputs.guid != "" && inputs.guid || steps.guid-search.outputs.guid }}
