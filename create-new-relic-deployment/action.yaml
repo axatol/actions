@@ -38,18 +38,6 @@ runs:
   using: composite
 
   steps:
-    - name: Determine parameters
-      id: params
-      shell: bash
-      run: |
-        commit=${{ github.sha }}
-        [[ -z "${{ inputs.commit }}" ]] && commit=${{ inputs.commit }}
-        echo "commit=${commit}" >> $GITHUB_OUTPUT
-
-        version="$( date +"%Y%m%d.%H%M%S" ).${commit:0:7}"
-        [[ -z "${{ inputs.version }}" ]] && version=${{ inputs.version }}
-        echo "version=${version}" >> $GITHUB_OUTPUT
-
     - name: Get entity GUID
       id: guid-search
       if: inputs.guid == ''
@@ -58,12 +46,28 @@ runs:
         name: ${{ inputs.name }}
         api-key: ${{ inputs.api-key }}
 
+    - name: Determine parameters
+      id: params
+      shell: bash
+      run: |
+        commit=${{ github.sha }}
+        [[ -z "${{ inputs.commit }}" ]] && commit=${{ inputs.commit }}
+        echo "commit=${commit}" | tee -a $GITHUB_OUTPUT
+
+        version="$( date +"%Y%m%d.%H%M%S" ).${commit:0:7}"
+        [[ -z "${{ inputs.version }}" ]] && version=${{ inputs.version }}
+        echo "version=${version}" | tee -a $GITHUB_OUTPUT
+
+        guid="${{ steps.guid-search.outputs.guid }}"
+        [[ -z "${{ inputs.guid }}" ]] && guid=${{ inputs.guid }}
+        echo "guid=${guid}" | tee -a $GITHUB_OUTPUT
+
     - name: Create deployment marker
       id: deployment-marker
       uses: newrelic/deployment-marker-action@v2.4.0
       with:
-        guid: ${{ inputs.guid != '' && inputs.guid || steps.guid-search.outputs.guid }}
         apiKey: ${{ inputs.api-key }}
         deeplink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.job }}
+        guid: ${{ steps.params.outputs.guid }}
         version: ${{ steps.params.outputs.version }}
         commit: ${{ steps.params.outputs.commit }}
