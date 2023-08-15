@@ -1,0 +1,59 @@
+name: Send a deployment notification via Discord
+description: Send a deployment notification via Discord
+
+inputs:
+  webhook-url:
+    description: Discord webhook url
+    required: true
+
+  status:
+    description: Success or failure
+
+runs:
+  using: composite
+
+  steps:
+    - if: inputs.status == 'success'
+      shell: bash
+      run: echo "STATUS_COLOR=65280" >> $GITHUB_ENV || true
+
+    - if: inputs.status == 'failure'
+      shell: bash
+      run: echo "STATUS_COLOR=16711680" >> $GITHUB_ENV || true
+
+    - if: inputs.status == 'success' || inputs.status == 'failure'
+      shell: python
+      env:
+        webhook_url: ${{ inputs.webhook-url }}
+        status_color: ${{ env.STATUS_COLOR }}
+        job_status: ${{ job.status }}
+        run_id: ${{ github.run_id }}
+        repository_url: ${{ github.event.repository.html_url }}
+      run: |
+        import os
+        import requests
+
+        webhook_url = os.getenv("webhook_url", "")
+        status_color = os.getenv("status_color", "")
+        job_status = os.getenv("job_status", "")
+        run_id = os.getenv("run_id", "")
+        repository_url = os.getenv("repository_url", "")
+
+        description = "\n".join([
+            f"Run conclusion: {job_status}",
+            f"- [Workflow run]({repository_url}/actions/runs/{run_id})",
+            f"- [Repository]({repository_url})",
+            f"- [Deployment history]({repository_url}/deployments/activity_log)",
+        ])
+
+        requests.post(
+            webhook_url,
+            json={
+                "embeds": [{
+                    "title": "Deployment complete",
+                    "type": "rich",
+                    "description": description,
+                    "color": status_color,
+                }]
+            },
+        )
