@@ -67,7 +67,7 @@ runs:
       uses: newrelic/deployment-marker-action@v2.4.0
       with:
         apiKey: ${{ inputs.api-key }}
-        deeplink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.job }}
+        deeplink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         guid: ${{ steps.params.outputs.guid }}
         version: ${{ steps.params.outputs.version }}
         commit: ${{ steps.params.outputs.commit }}
