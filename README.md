@@ -22,3 +22,7 @@
 
 - `axatol/actions/create-new-relic-deployment@release` - [more](./create-new-relic-deployment)
 - `axatol/actions/search-new-relic-entity-guid@release` - [more](./search-new-relic-entity-guid)
+
+## Notifications
+
+- `axatol/actions/send-discord-deployment-notification@release` - [more](./send-discord-deployment-notification)
