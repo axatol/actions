@@ -29,7 +29,7 @@ jobs:
       - name: Sync changes from master
         run: |
           git fetch origin master
-          git merge --strategy-option theirs --no-ff --allow-unrelated-histories origin/master
+          git merge --strategy-option theirs --no-ff origin/master
 
       - uses: actions/setup-node@v3
         with:
@@ -43,12 +43,13 @@ jobs:
 
       - name: Stage release assets
         run: |
-          workspaces=$( jq -rM '.workspaces[]' ./package.json )
+          workspaces=$( jq ---raw-output --monochrome-output '.workspaces[]' ./package.json )
           for workspace in $workspaces; do
-            git add -f "$workspace/*.js"
+            git add --force "$workspace/*.js"
           done
 
       - name: Release assets
         run: |
-          git commit -am "Release: $( date +\"%Y-%m-%d-%H%M\" )"
+          git commit --all --message "Release: $( date +\"%Y-%m-%d-%H%M\" )"
           git push origin release
+          git rev-parse HEAD
