@@ -43,7 +43,7 @@ jobs:
 
       - name: Stage release assets
         run: |
-          workspaces=$( jq ---raw-output --monochrome-output '.workspaces[]' ./package.json )
+          workspaces=$( jq --raw-output --monochrome-output '.workspaces[]' ./package.json )
           for workspace in $workspaces; do
             git add --force "$workspace/*.js"
           done
