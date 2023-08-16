@@ -9,7 +9,7 @@ Finds, downloads, and adds Hugo to the runner temp dir from [Hugo's releases](ht
   with:
     # Target release tag
     # Defaults to "latest"
-    image: "v0.111.3"
+    tag: "v0.111.3"
 
     # Target build architecture in hugo release asset name
     # Defaults to "linux-amd64"
@@ -34,5 +34,5 @@ Finds, downloads, and adds Hugo to the runner temp dir from [Hugo's releases](ht
 ```yaml
 - uses: axatol/actions/setup-hugo@release
   with:
-    image: "v0.111.3"
+    tag: "v0.111.3"
 ```

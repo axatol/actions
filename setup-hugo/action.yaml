@@ -13,10 +13,10 @@ inputs:
 
 outputs:
   tag:
-    description: Latest release tag
+    description: Downloaded release tag
     value: ${{ steps.get-release.outputs.tag }}
   download-url:
-    description: Latest release asset download url
+    description: Downloaded release asset download url
     value: ${{ steps.get-release.outputs.download-url }}
 
 runs:
