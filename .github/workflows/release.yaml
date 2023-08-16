@@ -50,6 +50,7 @@ jobs:
 
       - name: Release assets
         run: |
-          git commit --all --message "Release: $( date +\"%Y-%m-%d-%H%M\" )"
+          message="Release: $( date +\"%Y-%m-%d-%H%M\" )"
+          git commit --all  --allow-empty --message $message
           git push origin release
           git rev-parse HEAD
