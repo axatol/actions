@@ -25,7 +25,7 @@ runs:
     - shell: python
       run: |
         import os
-        from urllib import request
+        import requests
 
         # inputs
         webhook_url = "${{ inputs.webhook-url }}"
@@ -37,31 +37,34 @@ runs:
         repository_url = "${{ github.event.repository.html_url }}"
 
         titles = {
-          "pending": "Deployment pending review",
           "success": "Deployment complete",
+          "pending": "Deployment pending review",
           "failure": "Deployment failed",
         }
 
         title = titles.get(status, titles["pending"])
 
         colors = {
-          "pending": 16170496,
           "success": 65280,
+          "pending": 16170496,
           "failure": 16711680,
         }
 
         color = colors.get(status, colors["pending"])
 
-        request.urlopen(webhook_url, data={
-          "embeds": [{
-            "title": title,
-            "type": "rich",
-            "color": color,
-            "description": "\n".join([
-              f"Run conclusion: {job_status}",
-              f"- [Workflow run]({repository_url}/actions/runs/{run_id})",
-              f"- [Repository]({repository_url})",
-              f"- [Deployment history]({repository_url}/deployments/activity_log)",
-            ]),
-          }],
-        })
+        requests.post(
+          webhook_url,
+          json={
+            "embeds": [{
+              "title": title,
+              "type": "rich",
+              "color": color,
+              "description": "\n".join([
+                f"Run conclusion: {job_status}",
+                f"- [Repository]({repository_url})",
+                f"- [Workflow run]({repository_url}/actions/runs/{run_id})",
+                f"- [Deployment history]({repository_url}/deployments/activity_log)",
+              ]),
+            }]
+          },
+        )
