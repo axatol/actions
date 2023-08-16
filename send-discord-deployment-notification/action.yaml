@@ -7,53 +7,57 @@ inputs:
     required: true
 
   status:
-    description: Success or failure
+    description: One of "pending", "success", or "failed"
+    required: false
+    default: "pending"
 
 runs:
   using: composite
 
   steps:
-    - if: inputs.status == 'success'
-      shell: bash
-      run: echo "STATUS_COLOR=65280" >> $GITHUB_ENV || true
-
-    - if: inputs.status == 'failure'
-      shell: bash
-      run: echo "STATUS_COLOR=16711680" >> $GITHUB_ENV || true
-
-    - if: inputs.status == 'success' || inputs.status == 'failure'
-      shell: python
-      env:
-        webhook_url: ${{ inputs.webhook-url }}
-        status_color: ${{ env.STATUS_COLOR }}
-        job_status: ${{ job.status }}
-        run_id: ${{ github.run_id }}
-        repository_url: ${{ github.event.repository.html_url }}
+    - shell: python
       run: |
         import os
         import requests
 
-        webhook_url = os.getenv("webhook_url", "")
-        status_color = os.getenv("status_color", "")
-        job_status = os.getenv("job_status", "")
-        run_id = os.getenv("run_id", "")
-        repository_url = os.getenv("repository_url", "")
+        # inputs
+        webhook_url = "${{ inputs.webhook-url }}"
+        status = "${{ inputs.status }}"
 
-        description = "\n".join([
-            f"Run conclusion: {job_status}",
-            f"- [Workflow run]({repository_url}/actions/runs/{run_id})",
-            f"- [Repository]({repository_url})",
-            f"- [Deployment history]({repository_url}/deployments/activity_log)",
-        ])
+        # github context
+        job_status = "${{ job.status }}"
+        run_id = "${{ github.run_id }}"
+        repository_url = "${{ github.event.repository.html_url }}"
+
+        titles = {
+          "pending": "Deployment pending review"
+          "success": "Deployment complete",
+          "failure": "Deployment failed",
+        }
+
+        title = titles.get(status, titles["pending"])
+
+        colors = {
+          "pending": 16170496,
+          "success": 65280,
+          "failure": 16711680,
+        }
+
+        color = colors.get(status, colors["pending"])
 
         requests.post(
-            webhook_url,
-            json={
-                "embeds": [{
-                    "title": "Deployment complete",
-                    "type": "rich",
-                    "description": description,
-                    "color": status_color,
-                }]
-            },
+          webhook_url,
+          json={
+            "embeds": [{
+              "title": title,
+              "type": "rich",
+              "color": color,
+              "description": "\n".join([
+                f"Run conclusion: {job_status}",
+                f"- [Workflow run]({repository_url}/actions/runs/{run_id})",
+                f"- [Repository]({repository_url})",
+                f"- [Deployment history]({repository_url}/deployments/activity_log)",
+              ]),
+            }]
+          },
         )

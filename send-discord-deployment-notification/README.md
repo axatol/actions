@@ -10,7 +10,7 @@ Sends a Discord message via webhook
     # Discord webhook url
     webhook-url: ""
 
-    # Success or failure
+    # One of "pending", "success", or "failed"
     status: "success"
 ```
 
@@ -19,6 +19,15 @@ Sends a Discord message via webhook
 N/A
 
 ## Examples
+
+### Send a deployment pending notification
+
+```yaml
+- uses: axatol/actions/send-discord-deployment-notification@release
+  with:
+    webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+    status: pending
+```
 
 ### Send a notification based on outcome
 
