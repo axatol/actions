@@ -66,20 +66,24 @@ jobs:
           - { tool: node, version: "16" }
           - { tool: node, version: "18" }
           - { tool: python, version: "3.10" }
+          - { tool: python, version: "3.11" }
           - { tool: go, version: "1.20" }
+          - { tool: go, version: "1.21" }
 
     steps:
       - uses: actions/setup-node@v3
         if: matrix.target.tool == 'node'
         with:
           node-version: ${{ matrix.target.version }}
+          check-latest: true
 
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         if: matrix.target.tool == 'python'
         with:
           python-version: ${{ matrix.target.version }}
 
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         if: matrix.target.tool == 'go'
         with:
           go-version: ${{ matrix.target.version }}
+          check-latest: true
