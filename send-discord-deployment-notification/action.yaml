@@ -30,7 +30,7 @@ runs:
         repository_url = "${{ github.event.repository.html_url }}"
 
         titles = {
-          "pending": "Deployment pending review"
+          "pending": "Deployment pending review",
           "success": "Deployment complete",
           "failure": "Deployment failed",
         }
