@@ -6,16 +6,18 @@ WORKDIR $HOME
 RUN sudo apt-get update \
   && sudo apt-get install -y --no-install-recommends \
   apt-transport-https \
-  build-essential \
-  ca-certificates \
-  curl \
   groff \
   jq \
   less \
   libssl-dev \
   net-tools \
   openssl \
+  python3 \
+  python3-pip \
+  wget \
   xz-utils \
+  && sudo ln -sf /usr/bin/python3 /usr/bin/python \
+  && sudo ln -sf /usr/bin/pip3 /usr/bin/pip \
   && sudo apt-get clean \
   && sudo rm -rf /var/lib/apt/lists/*
 
