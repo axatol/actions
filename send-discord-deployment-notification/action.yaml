@@ -15,10 +15,17 @@ runs:
   using: composite
 
   steps:
+    - uses: actions/setup-python@v4
+      with:
+        version: 3.11
+
+    - shell: bash
+      run: pip install requests
+
     - shell: python
       run: |
         import os
-        import requests
+        from urllib import request
 
         # inputs
         webhook_url = "${{ inputs.webhook-url }}"
@@ -45,19 +52,16 @@ runs:
 
         color = colors.get(status, colors["pending"])
 
-        requests.post(
-          webhook_url,
-          json={
-            "embeds": [{
-              "title": title,
-              "type": "rich",
-              "color": color,
-              "description": "\n".join([
-                f"Run conclusion: {job_status}",
-                f"- [Workflow run]({repository_url}/actions/runs/{run_id})",
-                f"- [Repository]({repository_url})",
-                f"- [Deployment history]({repository_url}/deployments/activity_log)",
-              ]),
-            }]
-          },
-        )
+        request.urlopen(webhook_url, data={
+          "embeds": [{
+            "title": title,
+            "type": "rich",
+            "color": color,
+            "description": "\n".join([
+              f"Run conclusion: {job_status}",
+              f"- [Workflow run]({repository_url}/actions/runs/{run_id})",
+              f"- [Repository]({repository_url})",
+              f"- [Deployment history]({repository_url}/deployments/activity_log)",
+            ]),
+          }],
+        })
