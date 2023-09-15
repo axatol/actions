@@ -8,6 +8,7 @@
 
 ## AWS
 
+- `axatol/actions/assume-aws-role@release` - [more](./assume-aws-role)
 - `axatol/actions/get-ssm-parameter@release` - [more](./get-ssm-parameter)
 - `axatol/actions/prune-ecr-repository@release` - [more](./prune-ecr-repository)
 - `axatol/actions/invalidate-cloudfront-distribution@release` - [more](./invalidate-cloudfront-distribution/)
