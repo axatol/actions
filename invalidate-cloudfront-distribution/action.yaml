@@ -1,0 +1,55 @@
+name: Invalidate CloudFront distribution
+description: Invalidates the given paths for a CloudFront distribution.
+
+inputs:
+  distribution-id:
+    description: ID of distribution to invalidate
+    required: true
+
+  paths:
+    description: Paths to invalidate
+    required: false
+    default: "/*"
+
+  aws-region:
+    description: AWS region
+    required: false
+    default: us-east-1
+
+  invalidator-role-arn:
+    description: ARN of role to assume to handle invalidation
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - if: inputs.invalidator-role != ''
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: ${{ inputs.invalidator-role-arn }}
+        role-session-name: ${{ github.triggering_actor }}@${{ github.repository_owner }}@${{ github.event.repository.name }}@${{ github.job }}@${{ github.run_id }}
+        role-skip-session-tagging: true
+        role-duration-seconds: 3600
+        mask-aws-account-id: true
+        disable-retry: true
+
+    - shell: bash
+      id: invalidate
+      run: |
+        invalidation=$(
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ steps.ssm.outputs.distribution_id }}" \
+            --query "Invalidation.Id" \
+            --output "text" \
+            --paths ${{ inputs.paths }}
+        )
+
+        echo "invalidation_id=${invalidation}" >> $GITHUB_OUTPUT
+
+    - shell: bash
+      run: |
+        aws cloudfront wait invalidation-completed \
+          --distribution-id ${{ steps.ssm.outputs.distribution_id }} \
+          --id ${{ steps.invalidate.outputs.invalidation_id }}
