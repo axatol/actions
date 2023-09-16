@@ -5,6 +5,10 @@ inputs:
   path:
     description: Parameter path
 
+  region:
+    description: AWS region
+    default: ap-southeast-2
+
   env-name:
     description: Name of environment variable to export the value
     required: false
@@ -24,9 +28,10 @@ runs:
         value=$(
           aws ssm get-parameter \
             --name "${{ inputs.path }}" \
+            --region "${{ inputs.region }}" \
             --with-decryption \
             --query "Parameter.Value" \
-            --output text
+            --output "text"
         )
 
         echo "value=${value}" >> $GITHUB_OUTPUT
