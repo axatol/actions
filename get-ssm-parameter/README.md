@@ -10,6 +10,9 @@ Get and obscures an AWS SSM parameter
     # Parameter path
     path: /path/to/parameter
 
+    # AWS region
+    region: ap-southeast-2
+
     # Name of environment variable to export the value
     env-name: TF_VAR_my_var
 ```
