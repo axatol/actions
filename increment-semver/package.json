@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "compile": "esbuild --bundle --minify --platform=node --target=node16 --outfile=./index.js ./index.ts"
+    "compile": "esbuild --bundle --sourcemap --platform=node --target=node16 --outfile=./index.js ./index.ts"
   },
   "dependencies": {
     "@actions/core": "^1.10.0"

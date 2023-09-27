@@ -1,0 +1,42 @@
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - uses: ./run-ts-script
+        with:
+          script: console.log({ core, exec, github, io });
+
+      - uses: ./run-ts-script
+        with:
+          script: |
+            interface Test {
+              foo: string;
+              bar: number;
+            }
+
+            const fn = (test: Test): Test => {
+              console.log(test);
+              return test;
+            };
+
+            fn({ foo: "foo", bar: 1 });
+
+      - run: |
+          cat <<EOF > test.ts
+          type Blah = { bleh: string };
+          const blah: Blah = { bleh: "bleh" };
+          EOF
+
+      - uses: ./run-ts-script
+        with:
+          script-filename: test.ts
