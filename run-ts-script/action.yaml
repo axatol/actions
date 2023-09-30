@@ -1,0 +1,32 @@
+name: Run TS script
+description: Run a TypeScript script
+
+inputs:
+  script:
+    description: The script to run
+    required: false
+  script-filename:
+    description: Path to the script to run
+    required: false
+
+runs:
+  using: composite
+
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - shell: bash
+      run: npm install --global esbuild
+
+    - id: env
+      shell: bash
+      run: echo "node-path=$(npm list --global | head -1)/node_modules" >> $GITHUB_OUTPUT
+
+    - shell: bash
+      env:
+        NODE_PATH: ${{ steps.env.outputs.node-path }}
+        INPUT_SCRIPT: ${{ inputs.script }}
+        INPUT_SCRIPT-FILENAME: ${{ inputs.script-filename }}
+      run: node ${{ github.action_path }}/index.js
