@@ -2,6 +2,10 @@ name: Run TS script
 description: Run a TypeScript script
 
 inputs:
+  github-token:
+    description: GitHub token
+    required: false
+    default: ${{ github.token }}
   script:
     description: The script to run
     required: false
@@ -33,6 +37,7 @@ runs:
       shell: bash
       env:
         NODE_PATH: ${{ steps.env.outputs.node-path }}
+        INPUT_GITHUB-TOKEN: ${{ inputs.github-token }}
         INPUT_SCRIPT: ${{ inputs.script }}
         INPUT_SCRIPT-FILENAME: ${{ inputs.script-filename }}
       run: node ${{ github.action_path }}/index.js
