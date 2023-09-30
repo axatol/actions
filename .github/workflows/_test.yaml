@@ -52,6 +52,7 @@ jobs:
 
       - uses: ./docker-build-push
         with:
+          image: axatol/docker-build-push-test-image
           next-tag: next
           previous-tag: previous
           tag-previous: true
