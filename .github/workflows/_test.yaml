@@ -60,5 +60,5 @@ jobs:
           tag-previous: true
           use-cache: true
           build-context: ./docker-build-push
-          build-args: --file Dockerfile.test
+          build-args: --file ./docker-build-push/Dockerfile.test
           dry-run: true
