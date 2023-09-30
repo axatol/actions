@@ -13,6 +13,8 @@ jobs:
         with:
           show-progress: false
 
+      - run: npm --workspace=run-ts-script run compile
+
       - uses: ./run-ts-script
         with:
           script: console.log({ core, exec, github, io });
