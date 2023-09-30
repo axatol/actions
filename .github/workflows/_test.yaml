@@ -13,7 +13,13 @@ jobs:
         with:
           show-progress: false
 
-      - run: npm --workspace=run-ts-script run compile
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+
+      - run: |
+          npm --workspace=run-ts-script install
+          npm --workspace=run-ts-script run compile
 
       - uses: ./run-ts-script
         with:
