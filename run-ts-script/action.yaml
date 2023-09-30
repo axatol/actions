@@ -9,6 +9,11 @@ inputs:
     description: Path to the script to run
     required: false
 
+outputs:
+  result:
+    description: Raw JSON output of the script step if any
+    value: ${{ toJSON(steps.script.outputs) }}
+
 runs:
   using: composite
 
@@ -24,7 +29,8 @@ runs:
       shell: bash
       run: echo "node-path=$(npm list --global | head -1)/node_modules" >> $GITHUB_OUTPUT
 
-    - shell: bash
+    - id: script
+      shell: bash
       env:
         NODE_PATH: ${{ steps.env.outputs.node-path }}
         INPUT_SCRIPT: ${{ inputs.script }}
