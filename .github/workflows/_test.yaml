@@ -21,11 +21,13 @@ jobs:
           npm --workspace=run-ts-script install
           npm --workspace=run-ts-script run compile
 
-      - uses: ./run-ts-script
+      - name: Test inline JavaScript-compatible script
+        uses: ./run-ts-script
         with:
           script: console.log({ core, exec, github, io });
 
-      - uses: ./run-ts-script
+      - name: Test inline TypeScript script
+        uses: ./run-ts-script
         with:
           script: |
             interface Test {
@@ -46,7 +48,8 @@ jobs:
           const blah: Blah = { bleh: "bleh" };
           EOF
 
-      - uses: ./run-ts-script
+      - name: Test running TypeScript script file
+        uses: ./run-ts-script
         with:
           script-filename: test.ts
 

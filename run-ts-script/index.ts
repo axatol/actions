@@ -1,9 +1,12 @@
-import * as fs from "fs/promises";
 import * as core from "@actions/core";
 import * as esbuild from "esbuild";
 import * as exec from "@actions/exec";
-import * as github from "@actions/github";
+import * as fs from "fs/promises";
+import { context, getOctokit } from "@actions/github";
+import { requestLog } from "@octokit/plugin-request-log";
+import * as glob from "@actions/glob";
 import * as io from "@actions/io";
+import fetch from "node-fetch";
 
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 
@@ -27,9 +30,16 @@ const opts: esbuild.TransformOptions = {
 
 const main = async () => {
   const input = {
+    githubToken: core.getInput("github-token"),
     scriptFilename: core.getInput("script-filename"),
     script: core.getInput("script"),
   };
+
+  const github = getOctokit(
+    input.githubToken || process.env.GITHUB_TOKEN || "",
+    { log: process.env.RUNNER_DEBUG === "1" ? console : undefined },
+    requestLog as any
+  );
 
   core.debug(`input script filename: ${input.scriptFilename}`);
   core.debug(`input script: ${input.script}`);
@@ -62,7 +72,10 @@ const main = async () => {
   const script = await esbuild.transform(raw, opts);
   core.debug(`transformed code: ${script.code}`);
 
-  await callFunction({ core, exec, github, io }, script.code);
+  await callFunction(
+    { context, core, exec, fetch, github, glob, io },
+    script.code
+  );
 };
 
 process.on("unhandledRejection", handleError);

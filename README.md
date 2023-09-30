@@ -5,6 +5,7 @@
 - `axatol/actions/increment-semver@release` - [more](./increment-semver)
 - `axatol/actions/setup-hugo@release` - [more](./setup-hugo)
 - `axatol/actions/send-discord-deployment-notification@release` - [more](./send-discord-deployment-notification)
+- `axatol/actions/run-ts-script@release` - [more](./run-ts-script)
 
 ## AWS
 
