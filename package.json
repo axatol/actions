@@ -4,12 +4,13 @@
   "repository": "git@github.com:axatol/actions.git",
   "license": "MIT",
   "scripts": {
-    "synth": "sst cdk synth -q",
-    "compile": "npm --workspaces run --if-present compile"
+    "compile": "npm --workspaces run --if-present compile",
+    "clean": "npm --workspaces run --if-present clean"
   },
   "workspaces": [
     "increment-semver",
     "prune-ecr-repository",
+    "run-ts-script",
     "search-new-relic-entity-guid"
   ]
 }

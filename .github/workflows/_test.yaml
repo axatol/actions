@@ -1,0 +1,70 @@
+name: Test
+
+on:
+  pull_request:
+  workflow_call:
+
+jobs:
+  test-run-ts-script:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+
+      - run: |
+          npm --workspace=run-ts-script install
+          npm --workspace=run-ts-script run compile
+
+      - uses: ./run-ts-script
+        with:
+          script: console.log({ core, exec, github, io });
+
+      - uses: ./run-ts-script
+        with:
+          script: |
+            interface Test {
+              foo: string;
+              bar: number;
+            }
+
+            const fn = (test: Test): Test => {
+              console.log(test);
+              return test;
+            };
+
+            fn({ foo: "foo", bar: 1 });
+
+      - run: |
+          cat <<EOF > test.ts
+          type Blah = { bleh: string };
+          const blah: Blah = { bleh: "bleh" };
+          EOF
+
+      - uses: ./run-ts-script
+        with:
+          script-filename: test.ts
+
+  test-docker-build-push:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - uses: ./docker-build-push
+        with:
+          image: axatol/docker-build-push-test-image
+          next-tag: next
+          previous-tag: previous
+          tag-previous: true
+          use-cache: true
+          build-context: ./docker-build-push
+          build-args: --file ./docker-build-push/Dockerfile.test
+          dry-run: true
