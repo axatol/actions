@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "compile": "esbuild --bundle --sourcemap --platform=node --target=node16 --outfile=./index.js ./index.ts"
+    "compile": "esbuild --bundle --minify --sourcemap --platform=node --target=node20 --outfile=./index.js ./index.ts",
+    "clean": "rm -f index.js index.js.map"
   },
   "dependencies": {
     "@actions/core": "^1.9.0",

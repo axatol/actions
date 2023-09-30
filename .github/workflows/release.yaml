@@ -9,7 +9,13 @@ on:
       - "**/README.md"
 
 jobs:
+  test:
+    uses: ./.github/workflows/_test.yaml
+
   release:
+    needs:
+      - test
+
     runs-on:
       - self-hosted
 

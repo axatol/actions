@@ -2,9 +2,10 @@ name: Test
 
 on:
   pull_request:
+  workflow_call:
 
 jobs:
-  test:
+  test-run-ts-script:
     runs-on: self-hosted
 
     steps:
@@ -40,3 +41,21 @@ jobs:
       - uses: ./run-ts-script
         with:
           script-filename: test.ts
+
+  test-docker-build-push:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - uses: ./docker-build-push
+        with:
+          next-tag: next
+          previous-tag: previous
+          tag-previous: true
+          use-cache: true
+          build-context: ./docker-build-push
+          build-args: --file Dockerfile.test
+          dry-run: true
