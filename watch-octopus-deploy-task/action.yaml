@@ -1,0 +1,30 @@
+name: Watch Octopus Deploy task
+description: Streams logs from an Octopus Deploy server task
+
+inputs:
+  server-url:
+    description: Octopus Deploy server url
+    required: true
+
+  api-key:
+    description: Octopus Deploy api key
+    required: true
+
+  task-id:
+    description: ID of the server task in Octopus Deploy
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@v4
+      with:
+        go-version-file: go.mod
+        cache: false
+
+    - shell: bash
+      env:
+        server_url: ${{ inputs.server-url }}
+        api_key: ${{ inputs.api-key }}
+        task_id: ${{ inputs.task-id }}
+      run: go run main.go
