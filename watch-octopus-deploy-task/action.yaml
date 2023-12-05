@@ -4,15 +4,18 @@ description: Streams logs from an Octopus Deploy server task
 inputs:
   server-url:
     description: Octopus Deploy server url
-    required: true
+    required: false
 
   api-key:
     description: Octopus Deploy api key
-    required: true
+    required: false
 
-  task-id:
+  access-token:
+    description: Octopus Deploy access token
+
+  task-ids:
     description: ID of the server task in Octopus Deploy
-    required: true
+    required: false
 
 runs:
   using: composite
@@ -24,8 +27,9 @@ runs:
 
     - shell: bash
       env:
-        server_url: ${{ inputs.server-url }}
-        api_key: ${{ inputs.api-key }}
-        task_id: ${{ inputs.task-id }}
+        INPUT_OCTOPUS_URL: ${{ inputs.server-url }}
+        INPUT_OCTOPUS_API_KEY: ${{ inputs.api-key }}
+        INPUT_OCTOPUS_ACCESS_TOKEN: ${{ inputs.access-token }}
+        INPUT_TASK_IDS: ${{ inputs.task-ids }}
       working-directory: ${{ github.action_path }}
       run: go run main.go

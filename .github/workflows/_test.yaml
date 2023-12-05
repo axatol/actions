@@ -105,6 +105,4 @@ jobs:
 
       - uses: ./watch-octopus-deploy-task
         with:
-          server-url: https://octopus.k8s.axatol.xyz
-          api-key: ${{ secrets.OCTOPUS_DEPLOY_API_KEY }}
           task-ids: ${{ join(fromJson(steps.deploy.outputs.server_tasks).*.serverTaskId) }}

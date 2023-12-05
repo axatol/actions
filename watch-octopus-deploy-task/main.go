@@ -10,9 +10,20 @@ import (
 )
 
 func main() {
-	serverURL := internal.RequireEnv("SERVER_URL")
-	apiKey := internal.RequireEnv("API_KEY")
-	taskIDs := internal.MultivalueEnv("TASK_IDS")
+	serverURL := internal.GetInput("OCTOPUS_URL")
+	apiKey := internal.GetInput("OCTOPUS_API_KEY")
+	accessToken := internal.GetInput("OCTOPUS_ACCESS_TOKEN")
+	taskIDs := internal.GetMultivalueInput("TASK_IDS")
+
+	if serverURL == "" {
+		fmt.Printf("::error::Error: must provide the server url")
+		os.Exit(1)
+	}
+
+	if apiKey == "" && accessToken == "" {
+		fmt.Printf("::error::Error: must provide an api key or access token")
+		os.Exit(1)
+	}
 
 	fmt.Printf("Got task ids: [%s]", strings.Join(taskIDs, ", "))
 
@@ -22,12 +33,16 @@ func main() {
 
 	fmt.Printf("Watching logs for server tasks: %s\n", strings.Join(taskIDs, ", "))
 
-	od := internal.OctopusDeploy{ServerURL: serverURL, APIKey: apiKey}
 	printer := internal.NewPrinter()
+	od := internal.OctopusDeploy{
+		ServerURL:   serverURL,
+		APIKey:      apiKey,
+		AccessToken: accessToken,
+	}
 
 	for _, taskID := range taskIDs {
 		if err := WatchTask(od, printer, taskID); err != nil {
-			fmt.Printf("::error::%s", err.Error())
+			fmt.Printf("::error::Error: %s", err.Error())
 			os.Exit(1)
 		}
 	}

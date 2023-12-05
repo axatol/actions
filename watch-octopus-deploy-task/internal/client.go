@@ -9,8 +9,9 @@ import (
 )
 
 type OctopusDeploy struct {
-	ServerURL string
-	APIKey    string
+	ServerURL   string
+	APIKey      string
+	AccessToken string
 }
 
 func (od *OctopusDeploy) get(endpoint string, query url.Values, result any) error {
@@ -20,7 +21,11 @@ func (od *OctopusDeploy) get(endpoint string, query url.Values, result any) erro
 		return err
 	}
 
-	req.Header.Add("X-Octopus-ApiKey", od.APIKey)
+	if od.APIKey != "" {
+		req.Header.Add("X-Octopus-ApiKey", od.APIKey)
+	} else if od.AccessToken != "" {
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", od.AccessToken))
+	}
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

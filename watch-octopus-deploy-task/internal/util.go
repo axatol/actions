@@ -15,13 +15,17 @@ func RequireEnv(key string) string {
 	return value
 }
 
-func MultivalueEnv(key string) []string {
+func GetMultivalueInput(key string) []string {
 	value := os.Getenv(key)
 	multi := strings.Split(value, ",")
-	for i, str := range multi {
-		multi[i] = strings.TrimSpace(str)
+	result := []string{}
+	for _, str := range multi {
+		val := strings.TrimSpace(str)
+		if val != "" {
+			result = append(result, val)
+		}
 	}
-	return multi
+	return result
 }
 
 type Set[T comparable] map[T]struct{}
@@ -54,4 +58,16 @@ func (p printerImpl) Print(line string) {
 		p.seen.Add(line)
 		fmt.Println(line)
 	}
+}
+
+func GetInput(name string) string {
+	if val, ok := os.LookupEnv(fmt.Sprintf("INPUT_%s", name)); ok {
+		return val
+	}
+
+	if val, ok := os.LookupEnv(name); ok {
+		return val
+	}
+
+	return ""
 }
