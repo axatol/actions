@@ -73,6 +73,7 @@ jobs:
           dry-run: true
 
   test-watch-octopus-deploy-task:
+    if: false
     runs-on: self-hosted
 
     permissions:

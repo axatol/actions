@@ -30,7 +30,7 @@ type Task struct {
 	SpaceId                    string
 	Name                       string
 	Description                string
-	State                      string
+	State                      string // State can be one of Queued, Executing, Failed, Canceled, TimedOut, Success, Cancelling
 	QueueTime                  *time.Time
 	StartTime                  *time.Time
 	CompletedTime              *time.Time
@@ -57,7 +57,7 @@ func (t Task) Footer() {
 type ActivityLog struct {
 	Id          string
 	Name        string
-	Status      string
+	Status      string // Status can be one of Pending, Running, Success, Failed, Skipped, SuccessWithWarning, Canceled
 	Started     *time.Time
 	Ended       *time.Time
 	Children    []ActivityLog

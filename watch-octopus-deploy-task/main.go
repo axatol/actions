@@ -28,7 +28,8 @@ func main() {
 	fmt.Printf("got task ids: [%s]\n", strings.Join(taskIDs, ", "))
 
 	if len(taskIDs) < 1 {
-		return
+		fmt.Printf("::error::must provide at least one task id")
+		os.Exit(1)
 	}
 
 	fmt.Printf("watching logs for server tasks: %s\n", strings.Join(taskIDs, ", "))
@@ -49,7 +50,6 @@ func main() {
 }
 
 func WatchTask(od internal.OctopusDeploy, printer internal.Printer, taskID string) error {
-
 	task, err := od.GetTaskDetail(taskID)
 	if err != nil {
 		return err
