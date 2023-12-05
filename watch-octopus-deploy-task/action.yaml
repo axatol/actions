@@ -27,4 +27,4 @@ runs:
         server_url: ${{ inputs.server-url }}
         api_key: ${{ inputs.api-key }}
         task_id: ${{ inputs.task-id }}
-      run: go run main.go
+      run: go run ${{ github.action_path }}/main.go
