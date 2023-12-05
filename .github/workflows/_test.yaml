@@ -103,12 +103,8 @@ jobs:
           environments: Development
           release_number: ${{ steps.release.outputs.release_number }}
 
-      - run: echo "$TASK_IDS"
-        env:
-          TASK_IDS: ${{ steps.deploy.outputs.server_tasks }}
-
       - uses: ./watch-octopus-deploy-task
         with:
           SERVER_URL: https://octopus.k8s.axatol.xyz
           API_KEY: ${{ secrets.OCTOPUS_DEPLOY_API_KEY }}
-          TASK_IDS: ${{ join(fromJson(steps.deploy.outputs.server_tasks.*.serverTaskId)) }}
+          TASK_IDS: ${{ join(fromJson(steps.deploy.outputs.server_tasks).*.serverTaskId) }}
