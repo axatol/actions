@@ -46,12 +46,10 @@ func (t Task) Header() {
 	fmt.Printf("Description:   %s\n", t.Description)
 	fmt.Printf("Id:            %s\n", t.Id)
 	fmt.Printf("Space id:      %s\n", t.SpaceId)
-	fmt.Printf("Queue time:    %s\n", t.QueueTime.Local().Format(time.RFC1123))
 	fmt.Printf("Current state: %s\n", t.State)
 }
 
 func (t Task) Footer() {
-	fmt.Printf("Completed time: %s\n", t.CompletedTime.Local().Format(time.RFC1123))
 	fmt.Printf("Duration:       %s\n", t.Duration)
 	fmt.Printf("Final state:    %s\n", t.State)
 }

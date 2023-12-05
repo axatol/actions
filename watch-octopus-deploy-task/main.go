@@ -116,10 +116,6 @@ func FlattenActivityLogs(activities []internal.ActivityLog, depth int) []interna
 	elements := []internal.LogElement{}
 
 	for _, activity := range activities {
-		if activity.Status == "Queued" {
-			continue
-		}
-
 		start := activity.StartLogElement()
 		start.Depth = depth
 		elements = append(elements, start)
