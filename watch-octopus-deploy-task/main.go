@@ -25,7 +25,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Got task ids: [%s]", strings.Join(taskIDs, ", "))
+	fmt.Printf("got task ids: [%s]\n", strings.Join(taskIDs, ", "))
 
 	if len(taskIDs) < 1 {
 		return
@@ -93,18 +93,15 @@ func WatchTask(od internal.OctopusDeploy, printer internal.Printer, taskID strin
 			return err
 		}
 
-		// pending manual approval
-		if task.Task.HasPendingInterruptions {
-			continue
-		}
-
 		logs := FlattenActivityLogs(task.ActivityLogs, 0)
 		for _, log := range logs {
 			printer.Print(log.String())
 		}
 
-		// all done
-		if task.Task.IsCompleted {
+		if task.Task.IsCompleted &&
+			task.Task.State != "Queued" &&
+			task.Task.State != "Executing" &&
+			task.Task.State != "Cancelling" {
 			break
 		}
 	}
@@ -116,6 +113,10 @@ func FlattenActivityLogs(activities []internal.ActivityLog, depth int) []interna
 	elements := []internal.LogElement{}
 
 	for _, activity := range activities {
+		if activity.Status == "Pending" {
+			continue
+		}
+
 		start := activity.StartLogElement()
 		start.Depth = depth
 		elements = append(elements, start)
