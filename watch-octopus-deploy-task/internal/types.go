@@ -2,7 +2,6 @@ package internal
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 	"time"
 )
@@ -57,17 +56,10 @@ func (t Task) Footer() {
 	fmt.Printf("Final state:    %s\n", t.State)
 }
 
-func SortActivityLogs(elements []ActivityLog) []ActivityLog {
-	result := slices.Clone(elements)
-	slices.SortFunc(result, func(a, b ActivityLog) int {
-		return a.Started.Compare(*b.Started)
-	})
-	return result
-}
-
 type ActivityLog struct {
 	Id          string
 	Name        string
+	Status      string
 	Started     *time.Time
 	Ended       *time.Time
 	Children    []ActivityLog
@@ -88,14 +80,6 @@ func (al ActivityLog) EndLogElement() LogElement {
 		OccurredAt:  al.Ended,
 		MessageText: fmt.Sprintf("== Ended: %s ==", al.Name),
 	}
-}
-
-func SortLogElements(elements []LogElement) []LogElement {
-	result := slices.Clone(elements)
-	slices.SortFunc(result, func(a, b LogElement) int {
-		return a.OccurredAt.Compare(*b.OccurredAt)
-	})
-	return result
 }
 
 type LogElement struct {

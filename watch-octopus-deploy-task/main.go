@@ -65,7 +65,6 @@ func WatchTask(od internal.OctopusDeploy, printer internal.Printer, taskID strin
 	// print full log and exit
 	if task.Task.IsCompleted {
 		logs := FlattenActivityLogs(task.ActivityLogs, 0)
-		logs = internal.SortLogElements(logs)
 
 		for _, log := range logs {
 			printer.Print(log.String())
@@ -94,20 +93,19 @@ func WatchTask(od internal.OctopusDeploy, printer internal.Printer, taskID strin
 			return err
 		}
 
-		// all done
-		if task.Task.IsCompleted {
-			break
-		}
-
 		// pending manual approval
 		if task.Task.HasPendingInterruptions {
 			continue
 		}
 
 		logs := FlattenActivityLogs(task.ActivityLogs, 0)
-		logs = internal.SortLogElements(logs)
 		for _, log := range logs {
 			printer.Print(log.String())
+		}
+
+		// all done
+		if task.Task.IsCompleted {
+			break
 		}
 	}
 
@@ -118,6 +116,10 @@ func FlattenActivityLogs(activities []internal.ActivityLog, depth int) []interna
 	elements := []internal.LogElement{}
 
 	for _, activity := range activities {
+		if activity.Status == "Queued" {
+			continue
+		}
+
 		start := activity.StartLogElement()
 		start.Depth = depth
 		elements = append(elements, start)
