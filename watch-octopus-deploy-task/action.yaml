@@ -18,9 +18,8 @@ runs:
   using: composite
   steps:
     - uses: actions/setup-go@v4
-      working-directory: ${{ github.action_path }}
       with:
-        go-version-file: go.mod
+        go-version-file: ${{ github.action_path }}/go.mod
         cache: false
 
     - shell: bash
