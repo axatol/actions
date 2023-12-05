@@ -92,11 +92,13 @@ jobs:
       - id: release
         uses: OctopusDeploy/create-release-action@v3
         with:
+          space: Default
           project: Test Project
 
       - id: deploy
         uses: OctopusDeploy/deploy-release-action@v3
         with:
+          space: Default
           project: Test Project
           environments: Development
           release_number: ${{ steps.release.outputs.release_number }}
