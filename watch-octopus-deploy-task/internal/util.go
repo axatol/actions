@@ -61,11 +61,11 @@ func (p printerImpl) Print(line string) {
 }
 
 func GetInput(name string) string {
-	if val, ok := os.LookupEnv(fmt.Sprintf("INPUT_%s", name)); ok {
+	if val := os.Getenv(fmt.Sprintf("INPUT_%s", name)); val != "" {
 		return val
 	}
 
-	if val, ok := os.LookupEnv(name); ok {
+	if val := os.Getenv(name); val != "" {
 		return val
 	}
 
