@@ -10,18 +10,18 @@ import (
 )
 
 func main() {
-	serverURL := internal.GetInput("OCTOPUS_URL")
-	apiKey := internal.GetInput("OCTOPUS_API_KEY")
-	accessToken := internal.GetInput("OCTOPUS_ACCESS_TOKEN")
+	serverURL := os.Getenv("OCTOPUS_URL")
+	apiKey := os.Getenv("OCTOPUS_API_KEY")
+	accessToken := os.Getenv("OCTOPUS_ACCESS_TOKEN")
 	taskIDs := internal.GetMultivalueInput("TASK_IDS")
 
 	if serverURL == "" {
-		fmt.Printf("::error::Error: must provide the server url")
+		fmt.Printf("::error::must provide the server url")
 		os.Exit(1)
 	}
 
 	if apiKey == "" && accessToken == "" {
-		fmt.Printf("::error::Error: must provide an api key or access token")
+		fmt.Printf("::error::must provide an api key or access token")
 		os.Exit(1)
 	}
 
@@ -31,7 +31,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Watching logs for server tasks: %s\n", strings.Join(taskIDs, ", "))
+	fmt.Printf("watching logs for server tasks: %s\n", strings.Join(taskIDs, ", "))
 
 	printer := internal.NewPrinter()
 	od := internal.OctopusDeploy{
@@ -42,7 +42,7 @@ func main() {
 
 	for _, taskID := range taskIDs {
 		if err := WatchTask(od, printer, taskID); err != nil {
-			fmt.Printf("::error::Error: %s", err.Error())
+			fmt.Printf("::error::%s", err.Error())
 			os.Exit(1)
 		}
 	}
@@ -77,17 +77,17 @@ func WatchTask(od internal.OctopusDeploy, printer internal.Printer, taskID strin
 	ticker := time.NewTicker(time.Second * 3)
 
 	// wait for start
-	fmt.Println("Waiting for task to start")
+	fmt.Println("waiting for task to start")
 	for range ticker.C {
 		if task != nil && task.Task.StartTime != nil {
 			break
 		}
 
-		fmt.Printf("Task state: %s\n", task.Task.State)
+		fmt.Printf("task state: %s\n", task.Task.State)
 	}
 
 	// wait for completion
-	fmt.Println("Watching task")
+	fmt.Println("watching task")
 	for range ticker.C {
 		task, err = od.GetTaskDetail(taskID)
 		if err != nil {

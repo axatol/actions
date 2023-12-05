@@ -6,15 +6,6 @@ import (
 	"strings"
 )
 
-func RequireEnv(key string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		panic(fmt.Errorf("required environment variable not set: %s", key))
-	}
-
-	return value
-}
-
 func GetMultivalueInput(key string) []string {
 	value := os.Getenv(key)
 	multi := strings.Split(value, ",")
@@ -58,16 +49,4 @@ func (p printerImpl) Print(line string) {
 		p.seen.Add(line)
 		fmt.Println(line)
 	}
-}
-
-func GetInput(name string) string {
-	if val := os.Getenv(fmt.Sprintf("INPUT_%s", name)); val != "" {
-		return val
-	}
-
-	if val := os.Getenv(name); val != "" {
-		return val
-	}
-
-	return ""
 }
