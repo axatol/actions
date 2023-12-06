@@ -71,3 +71,39 @@ jobs:
           build-context: ./docker-build-push
           build-args: --file ./docker-build-push/Dockerfile.test
           dry-run: true
+
+  test-watch-octopus-deploy-task:
+    if: false
+    runs-on: self-hosted
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - uses: OctopusDeploy/login@v1
+        with:
+          server: http://octopus-deploy.octopus.svc.cluster.local
+          service_account_id: 74f688d0-6e11-4ed2-a438-ad1fca0ef1d5
+
+      - id: release
+        uses: OctopusDeploy/create-release-action@v3
+        with:
+          space: Default
+          project: Test Project
+
+      - id: deploy
+        uses: OctopusDeploy/deploy-release-action@v3
+        with:
+          space: Default
+          project: Test Project
+          environments: Development
+          release_number: ${{ steps.release.outputs.release_number }}
+
+      - uses: ./watch-octopus-deploy-task
+        with:
+          task-ids: ${{ join(fromJson(steps.deploy.outputs.server_tasks).*.serverTaskId) }}
