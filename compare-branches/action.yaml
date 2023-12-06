@@ -1,0 +1,84 @@
+name: Compare branches
+description: Compares the differences between two branches. Must be executed in the context of a git repository
+
+inputs:
+  remote-name:
+    description: The name of the remote to fetch from
+    default: origin
+
+  base-ref:
+    description: The branch that the changes are based on
+    default: ${{ github.base_ref }}
+
+  head-ref:
+    description: The branch that contains the proposed changes
+    default: ${{ github.head_ref }}
+
+  diff-type:
+    description: >-
+      The type of diff; "base" for "..." or "tip" for "..".
+      "base" means diff from when base and head intersect (beginning of head).
+      "tip" means diff from the latest commit of head.
+    default: tip
+
+  filter-regex:
+    description: Filter to apply to resultant files and directories
+    default: ".*"
+
+outputs:
+  directories:
+    description: A JSON encoded array of directories containing changes
+    value: ${{ steps.parse.outputs.directories }}
+  files:
+    description: A JSON encoded array of files that have been changed
+    value: ${{ steps.parse.outputs.files }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: diff
+      shell: bash
+      env:
+        REMOTE_NAME: ${{ inputs.remote-name }}
+        BASE_REF: ${{ inputs.base-ref }}
+        HEAD_REF: ${{ inputs.head-ref }}
+        DIFF_TYPE: ${{ inputs.diff-type }}
+      run: |
+        [ -z "${BASE_REF}" ] && echo "error::Must provide a base ref" && exit 1
+        [ -z "${HEAD_REF}" ] && echo "error::Must provide a head ref" && exit 1
+
+        git fetch ${REMOTE_NAME} ${BASE_REF}:${BASE_REF}
+        git fetch ${REMOTE_NAME} ${HEAD_REF}:${HEAD_REF}
+
+        diff_operator=""
+        [ "${DIFF_TYPE}" == "base" ] && diff_operator="..."
+        [ "${DIFF_TYPE}" == "tip" ] && diff_operator=".."
+        [ -z "${diff_operator}" ] && echo "error::Must provide a valid diff type" && exit 1
+
+        files=$(git diff --name-only ${BASE_REF}${diff_operator}${HEAD_REF})
+        {
+          echo "files<<EOF"
+          echo ${files}
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
+
+    - id: parse
+      uses: actions/github-script@v7
+      env:
+        FILES: ${{ steps.diff.outputs.files }}
+        FILTER_REGEX: ${{ inputs.filter-regex }}
+      with:
+        script: |
+          const path = require("path");
+
+          const filter = new RegExp(process.env.FILTER_REGEX);
+          const allFiles = process.env.FILES.split(/\s+/g);
+          const files = allFiles.filter((file) => filter.test(file));
+          core.setOutput("files", JSON.stringify(files));
+          console.log(JSON.stringify(files));
+
+          const allDirectories = files.map((file) => path.dirname(file));
+          const directories = Array.from(new Set(allDirectories));
+          core.setOutput("directories", JSON.stringify(directories));
+          console.log(JSON.stringify(directories));
