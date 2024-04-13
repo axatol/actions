@@ -4,26 +4,26 @@ description: Create newrelic deployment
 inputs:
   name:
     description: Application name, used to find GUID if not provided
-    required: true
+    required: false
 
   api-key:
     description: New Relic api key
-    required: true
+    required: false
 
   guid:
     description: New Relic entity GUID
     required: false
-    default: ""
+    default: ''
 
   commit:
     description: Commit SHA
     required: false
-    default: ""
+    default: ''
 
   version:
     description: Release version
     required: false
-    default: ""
+    default: ''
 
   deployment-type:
     description: Deployment type
@@ -38,6 +38,11 @@ runs:
   using: composite
 
   steps:
+    - name: Validate inputs
+      if: inputs.guid == '' && (inputs.name == '' || inputs.api-key == '')
+      shell: bash
+      run: exit 1
+
     - name: Get entity GUID
       id: guid-search
       if: inputs.guid == ''
