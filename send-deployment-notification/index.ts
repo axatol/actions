@@ -2,50 +2,63 @@ import * as core from "@actions/core";
 import * as http from "@actions/http-client";
 import { context } from "@actions/github";
 
-export type Status = "success" | "pending" | "failure";
+const statuses = ["success", "pending", "failure"] as const;
+type Status = (typeof statuses)[number];
 
-export const destinations: Record<string, string> = {
+const formats = ["slack", "discord", "raw"] as const;
+type Format = (typeof formats)[number];
+
+const destinations: Record<string, string> = {
   "discord.com": "discord",
   "hooks.slack.com": "slack",
-  "": "unknown",
 };
 
-export const titles: Record<Status, string> = {
+const titles: Record<Status, string> = {
   success: "Deployment complete",
   pending: "Deployment pending review",
   failure: "Deployment failed",
 };
 
-export const decColors: Record<Status, number> = {
-  success: 65280,
-  pending: 16170496,
-  failure: 16711680,
+const colors: Record<Status, { dec: number; hex: string }> = {
+  success: { dec: 65280, hex: "#00FF00" },
+  pending: { dec: 16170496, hex: "#F6BE00" },
+  failure: { dec: 16711680, hex: "#FF0000" },
 };
 
-export const hexColors: Record<Status, string> = {
-  success: "#00FF00",
-  pending: "#F6BE00",
-  failure: "#FF0000",
-};
-
-const run = async () => {
+const getInputs = () => {
   const rawWebhookUrl = core.getInput("webhook-url", { required: true });
   const webhookUrl = new URL(rawWebhookUrl);
-  const destination = destinations[webhookUrl.host] || "raw";
+  const destination = destinations[webhookUrl.host];
+  const payloadFormat = core.getInput("payload-format") || destination || "raw";
+  const jobStatus = core.getInput("job-status", { required: true });
 
-  const jobStatus = core.getInput("job-status", { required: true }) as Status;
-  if (!["success", "pending", "failure"].includes(jobStatus)) {
+  const params = {
+    webhookUrl,
+    payloadFormat: payloadFormat as Format,
+    jobStatus: jobStatus as Status,
+  };
+
+  if (!formats.includes(params.payloadFormat)) {
+    throw new Error("payload-format must be one of ");
+  }
+
+  if (!statuses.includes(params.jobStatus)) {
     throw new Error("job-status must be one of success, pending, or failure");
   }
 
+  return params;
+};
+
+const run = async () => {
+  const { webhookUrl, payloadFormat, jobStatus } = getInputs();
+
   const title = titles[jobStatus] ?? titles["pending"];
-  const decColor = decColors[jobStatus] ?? decColors["pending"];
-  const hexColor = hexColors[jobStatus] ?? hexColors["pending"];
+  const color = colors[jobStatus] ?? colors["pending"];
   const repositoryUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}`;
   const client = new http.HttpClient();
   const headers = { "Content-Type": "application/json" };
 
-  switch (destination) {
+  switch (payloadFormat) {
     case "raw":
       await client.postJson(
         webhookUrl.toString(),
@@ -65,7 +78,7 @@ const run = async () => {
           embeds: [
             {
               title,
-              color: decColor,
+              color: color.dec,
               fields: [
                 { name: "Run conclusion", value: jobStatus },
                 { name: "Repo", value: context.repo },
@@ -75,17 +88,17 @@ const run = async () => {
             },
             {
               title: "Repository",
-              color: decColor,
+              color: color.dec,
               url: repositoryUrl,
             },
             {
               title: "Workflow run",
-              color: decColor,
+              color: color.dec,
               url: `${repositoryUrl}/actions/runs/${context.runId}`,
             },
             {
               title: "Deployment history",
-              color: decColor,
+              color: color.dec,
               url: `${repositoryUrl}/deployments/activity_log`,
             },
           ],
@@ -99,7 +112,7 @@ const run = async () => {
         {
           attachments: [
             {
-              color: hexColor,
+              color: color.hex,
               blocks: [
                 {
                   type: "section",
@@ -149,9 +162,6 @@ const run = async () => {
         },
         headers
       );
-
-    default:
-      throw new Error(`Unsupported format: ${destination}`);
   }
 };
 
