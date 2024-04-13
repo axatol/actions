@@ -11,6 +11,7 @@
     "increment-semver",
     "prune-ecr-repository",
     "run-ts-script",
-    "search-new-relic-entity-guid"
+    "search-new-relic-entity-guid",
+    "send-deployment-notification"
   ]
 }
