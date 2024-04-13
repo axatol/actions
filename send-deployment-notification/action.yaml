@@ -1,0 +1,11 @@
+name: Send a deployment notification via Discord
+description: Send a deployment notification via Discord
+
+inputs:
+  webhook-url:
+    description: Webhook url
+    required: true
+
+runs:
+  using: node20
+  main: index.js
