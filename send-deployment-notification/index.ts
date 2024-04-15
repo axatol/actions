@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import * as http from "@actions/http-client";
+import { TypedResponse } from "@actions/http-client/lib/interfaces";
 import { context } from "@actions/github";
 
 const statuses = ["success", "pending", "failure"] as const;
@@ -58,9 +59,12 @@ const run = async () => {
   const client = new http.HttpClient();
   const headers = { "Content-Type": "application/json" };
 
+  core.info(`delivering ${payloadFormat} payload`);
+
+  let response: TypedResponse<unknown>;
   switch (payloadFormat) {
     case "raw":
-      await client.postJson(
+      response = await client.postJson(
         webhookUrl.toString(),
         {
           runConclusion: jobStatus,
@@ -72,7 +76,7 @@ const run = async () => {
       );
 
     case "discord":
-      await client.postJson(
+      response = await client.postJson(
         webhookUrl.toString(),
         {
           embeds: [
@@ -107,7 +111,7 @@ const run = async () => {
       );
 
     case "slack":
-      await client.postJson(
+      response = await client.postJson(
         webhookUrl.toString(),
         {
           attachments: [
@@ -163,6 +167,9 @@ const run = async () => {
         headers
       );
   }
+
+  const { statusCode, result } = response;
+  core.info(JSON.stringify({ statusCode, result }));
 };
 
 run().catch((error) => {
