@@ -76,27 +76,22 @@ const buildPayload = (
               {
                 name: "Event",
                 value: context.eventName,
-                inline: true,
               },
               {
                 name: "Triggered by",
                 value: `[${context.actor}](https://github.com/${context.actor})`,
-                inline: true,
               },
               {
                 name: "Workflow run",
                 value: `[Link](${repositoryUrl}/actions/runs/${context.runId})`,
-                inline: true,
               },
               {
                 name: "Repository",
                 value: `[Link](${repositoryUrl})`,
-                inline: true,
               },
               {
                 name: "Deployment history",
-                value: `${repositoryUrl}/deployments/activity_log`,
-                inline: true,
+                value: `[Link](${repositoryUrl}/deployments/activity_log)`,
               },
             ],
           },
