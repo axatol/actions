@@ -182,7 +182,11 @@ const run = async () => {
   );
 
   core.info(`delivering ${payloadFormat} payload: ${JSON.stringify(payload)}`);
-  const response = await client.post(webhookUrl.toString(), payload, headers);
+  const response = await client.post(
+    webhookUrl.toString(),
+    JSON.stringify(payload),
+    headers
+  );
   core.info(`response: ${response.message}`);
 };
 
