@@ -73,25 +73,32 @@ const buildPayload = (
             url: `${repositoryUrl}/actions/runs/${context.runId}`,
             color: color.dec,
             fields: [
-              { name: "Run conclusion", value: jobStatus },
-              { name: "Repo", value: context.repo },
-              { name: "Event", value: context.eventName },
-              { name: "Action", value: context.action },
+              {
+                name: "Event",
+                value: context.eventName,
+                inline: true,
+              },
               {
                 name: "Triggered by",
                 value: `[${context.actor}](https://github.com/${context.actor})`,
+                inline: true,
               },
               {
-                name: "Links",
-                value: [
-                  `[*Repository*](${repositoryUrl})`,
-                  `[*Deployment history*](${repositoryUrl}/deployments/activity_log)`,
-                ].join(" :heavy_minus_sign: "),
+                name: "Workflow run",
+                value: `[Link](${repositoryUrl}/actions/runs/${context.runId})`,
+                inline: true,
+              },
+              {
+                name: "Repository",
+                value: `[Link](${repositoryUrl})`,
+                inline: true,
+              },
+              {
+                name: "Deployment history",
+                value: `${repositoryUrl}/deployments/activity_log`,
+                inline: true,
               },
             ],
-            footer: {
-              text: `Triggered by [${context.actor}](https://github.com/${context.actor})`,
-            },
           },
         ],
       };
