@@ -30,7 +30,7 @@ const getInputs = () => {
   const webhookUrl = new URL(rawWebhookUrl);
   const destination = destinations[webhookUrl.host];
   const payloadFormat = core.getInput("payload-format") || destination || "raw";
-  const jobStatus = core.getInput("job-status", { required: true });
+  const jobStatus = core.getInput("status", { required: true });
 
   const params = {
     webhookUrl,
