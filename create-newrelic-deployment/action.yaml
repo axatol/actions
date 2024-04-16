@@ -1,0 +1,34 @@
+name: Create newrelic deployment
+description: Create newrelic deployment
+
+inputs:
+  name:
+    description: Application name, used to find GUID if not provided
+    required: false
+
+  api-key:
+    description: New Relic api key
+    required: true
+
+  guid:
+    description: New Relic entity GUID
+    required: false
+    default: ''
+
+  commit:
+    description: Commit SHA
+    required: false
+    default: ''
+
+  version:
+    description: Release version
+    required: false
+    default: ''
+
+  deployment-type:
+    description: Deployment type
+    required: false
+
+runs:
+  using: node20
+  main: index.js
