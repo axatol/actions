@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as http from "@actions/http-client";
 import { context } from "@actions/github";
 
-const statuses = ["success", "pending", "failure"] as const;
+const statuses = ["success", "pending", "failure", "cancelled"] as const;
 type Status = (typeof statuses)[number];
 
 const formats = ["slack", "discord", "raw"] as const;
@@ -17,12 +17,14 @@ const titles: Record<Status, string> = {
   success: "Deployment complete",
   pending: "Deployment pending review",
   failure: "Deployment failed",
+  cancelled: "Deployment cancelled",
 };
 
 const colors: Record<Status, { dec: number; hex: string }> = {
   success: { dec: 65280, hex: "#00FF00" },
   pending: { dec: 16170496, hex: "#F6BE00" },
   failure: { dec: 16711680, hex: "#FF0000" },
+  cancelled: { dec: 16711680, hex: "#FF0000" },
 };
 
 const getInputs = () => {
