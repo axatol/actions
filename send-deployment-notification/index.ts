@@ -1,6 +1,5 @@
 import * as core from "@actions/core";
 import * as http from "@actions/http-client";
-import { TypedResponse } from "@actions/http-client/lib/interfaces";
 import { context } from "@actions/github";
 
 const statuses = ["success", "pending", "failure"] as const;
@@ -50,6 +49,111 @@ const getInputs = () => {
   return params;
 };
 
+const buildPayload = (
+  payloadFormat: string,
+  jobStatus: string,
+  repositoryUrl: string,
+  title: string,
+  color: (typeof colors)[Status]
+): any => {
+  switch (payloadFormat) {
+    case "raw":
+      return {
+        runConclusion: jobStatus,
+        repositoryUrl,
+        workflowRun: `${repositoryUrl}/actions/runs/${context.runId}`,
+        deploymentHistory: `${repositoryUrl}/deployments/activity_log`,
+      };
+
+    case "discord":
+      return {
+        embeds: [
+          {
+            title,
+            url: `${repositoryUrl}/actions/runs/${context.runId}`,
+            color: color.dec,
+            fields: [
+              { name: "Run conclusion", value: jobStatus },
+              { name: "Repo", value: context.repo },
+              { name: "Event", value: context.eventName },
+              { name: "Action", value: context.action },
+              {
+                name: "Triggered by",
+                value: `[${context.actor}](https://github.com/${context.actor})`,
+              },
+              {
+                name: "Links",
+                value: [
+                  `[*Repository*](${repositoryUrl})`,
+                  `[*Deployment history*](${repositoryUrl}/deployments/activity_log)`,
+                ].join(" :heavy_minus_sign: "),
+              },
+            ],
+            footer: {
+              text: `Triggered by [${context.actor}](https://github.com/${context.actor})`,
+            },
+          },
+        ],
+      };
+
+    case "slack":
+      return {
+        attachments: [
+          {
+            color: color.hex,
+            blocks: [
+              {
+                type: "section",
+                text: { type: "mrkdwn", text: title },
+              },
+              {
+                type: "section",
+                fields: [
+                  { type: "mrkdwn", text: `*Run conclusion:*\n${jobStatus}` },
+                  { type: "mrkdwn", text: `*Repo:*\n${context.repo}` },
+                  { type: "mrkdwn", text: `*Event:*\n${context.eventName}` },
+                  { type: "mrkdwn", text: `*Action:*\n${context.action}` },
+                ],
+              },
+              {
+                type: "actions",
+                elements: [
+                  {
+                    type: "button",
+                    text: { type: "plain_text", text: "Repository" },
+                    url: `${repositoryUrl}`,
+                  },
+                  {
+                    type: "button",
+                    text: { type: "plain_text", text: "Workflow run" },
+                    url: `${repositoryUrl}/actions/runs/${context.runId}`,
+                  },
+                  {
+                    type: "button",
+                    text: { type: "plain_text", text: "Deployment history" },
+                    url: `${repositoryUrl}/deployments/activity_log`,
+                  },
+                ],
+              },
+              {
+                type: "context",
+                elements: [
+                  {
+                    type: "mrkdwn",
+                    text: `Triggered by [${context.actor}](https://github.com/${context.actor})`,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+    default:
+      throw new Error(`unexpected payload format: ${payloadFormat}`);
+  }
+};
+
 const run = async () => {
   const { webhookUrl, payloadFormat, jobStatus } = getInputs();
 
@@ -59,119 +163,27 @@ const run = async () => {
   const client = new http.HttpClient();
   const headers = { "Content-Type": "application/json" };
 
-  core.info(`delivering ${payloadFormat} payload`);
+  core.info(
+    `payload parameters: ${JSON.stringify({
+      payloadFormat,
+      jobStatus,
+      repositoryUrl,
+      title,
+      color,
+    })}`
+  );
 
-  let response: TypedResponse<unknown>;
-  switch (payloadFormat) {
-    case "raw":
-      response = await client.postJson(
-        webhookUrl.toString(),
-        {
-          runConclusion: jobStatus,
-          repositoryUrl,
-          workflowRun: `${repositoryUrl}/actions/runs/${context.runId}`,
-          deploymentHistory: `${repositoryUrl}/deployments/activity_log`,
-        },
-        headers
-      );
+  const payload = buildPayload(
+    payloadFormat,
+    jobStatus,
+    repositoryUrl,
+    title,
+    color
+  );
 
-    case "discord":
-      response = await client.postJson(
-        webhookUrl.toString(),
-        {
-          embeds: [
-            {
-              title,
-              color: color.dec,
-              fields: [
-                { name: "Run conclusion", value: jobStatus },
-                { name: "Repo", value: context.repo },
-                { name: "Event", value: context.eventName },
-                { name: "Action", value: context.action },
-              ],
-            },
-            {
-              title: "Repository",
-              color: color.dec,
-              url: repositoryUrl,
-            },
-            {
-              title: "Workflow run",
-              color: color.dec,
-              url: `${repositoryUrl}/actions/runs/${context.runId}`,
-            },
-            {
-              title: "Deployment history",
-              color: color.dec,
-              url: `${repositoryUrl}/deployments/activity_log`,
-            },
-          ],
-        },
-        headers
-      );
-
-    case "slack":
-      response = await client.postJson(
-        webhookUrl.toString(),
-        {
-          attachments: [
-            {
-              color: color.hex,
-              blocks: [
-                {
-                  type: "section",
-                  text: { type: "mrkdwn", text: title },
-                },
-                {
-                  type: "section",
-                  fields: [
-                    { type: "mrkdwn", text: `*Run conclusion:*\n${jobStatus}` },
-                    { type: "mrkdwn", text: `*Repo:*\n${context.repo}` },
-                    { type: "mrkdwn", text: `*Event:*\n${context.eventName}` },
-                    { type: "mrkdwn", text: `*Action:*\n${context.action}` },
-                  ],
-                },
-                {
-                  type: "actions",
-                  elements: [
-                    {
-                      type: "button",
-                      text: { type: "plain_text", text: "Repository" },
-                      url: `${repositoryUrl}`,
-                    },
-                    {
-                      type: "button",
-                      text: { type: "plain_text", text: "Workflow run" },
-                      url: `${repositoryUrl}/actions/runs/${context.runId}`,
-                    },
-                    {
-                      type: "button",
-                      text: { type: "plain_text", text: "Deployment history" },
-                      url: `${repositoryUrl}/deployments/activity_log`,
-                    },
-                  ],
-                },
-                {
-                  type: "context",
-                  elements: [
-                    {
-                      type: "mrkdwn",
-                      text: `Triggered by [${context.actor}](https://github.com/${context.actor})`,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        headers
-      );
-  }
-
-  const { statusCode, result } = response;
-  core.info(JSON.stringify({ statusCode, result }));
+  core.info(`delivering ${payloadFormat} payload: ${JSON.stringify(payload)}`);
+  const response = await client.post(webhookUrl.toString(), payload, headers);
+  core.info(`response: ${response.message}`);
 };
 
-run().catch((error) => {
-  core.setFailed(error);
-});
+run().catch(core.setFailed);
