@@ -8,6 +8,7 @@
     "clean": "npm --workspaces run --if-present clean"
   },
   "workspaces": [
+    "create-newrelic-deployment",
     "increment-semver",
     "prune-ecr-repository",
     "run-ts-script",

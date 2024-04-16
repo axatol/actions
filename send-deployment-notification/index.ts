@@ -182,20 +182,15 @@ const run = async () => {
   );
 
   core.info(`delivering ${payloadFormat} payload: ${JSON.stringify(payload)}`);
-  try {
-    const response = await client.post(
-      webhookUrl.toString(),
-      JSON.stringify(payload),
-      headers
-    );
+  const response = await client.post(
+    webhookUrl.toString(),
+    JSON.stringify(payload),
+    headers
+  );
 
-    core.info(
-      `response: ${response.message.statusCode} - ${response.message.statusMessage}`
-    );
-    core.info(`response body: ${await response.readBody()}`);
-  } catch (error: any) {
-    core.setFailed(error);
-  }
+  const { statusCode, statusMessage } = response.message;
+  core.info(`result: ${statusCode} - ${statusMessage}`);
+  core.info(`response: ${await response.readBody()}`);
 };
 
 run().catch(core.setFailed);

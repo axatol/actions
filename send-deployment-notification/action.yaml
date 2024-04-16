@@ -5,7 +5,7 @@ inputs:
   webhook-url:
     description: Webhook url
     required: true
-  job-status:
+  status:
     description: Status of the job, one of success, failure, or pending
     required: true
   payload-format:
