@@ -22,8 +22,8 @@ runs:
       with:
         aws-region: ${{ inputs.aws-region }}
         role-to-assume: ${{ inputs.role-to-assume }}
-        role-session-name: ${{ github.triggering_actor }}@${{ github.event.repository.owner.login }}@${{ github.event.repository.name }}@${{ github.job }}@${{ github.run_id }}
-        role-skip-session-tagging: true
+        role-session-name: github-actions@${{ github.triggering_actor }}
+        role-skip-session-tagging: false
         role-duration-seconds: 3600
         mask-aws-account-id: true
         disable-retry: true

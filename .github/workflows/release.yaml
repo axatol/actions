@@ -16,8 +16,7 @@ jobs:
     needs:
       - test
 
-    runs-on:
-      - self-hosted
+    runs-on: ${{ github.repository_owner}}
 
     concurrency:
       group: release

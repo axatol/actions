@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-run-ts-script:
-    runs-on: self-hosted
+    runs-on: ${{ github.repository_owner}}
 
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +54,7 @@ jobs:
           script-filename: test.ts
 
   test-docker-build-push:
-    runs-on: self-hosted
+    runs-on: ${{ github.repository_owner}}
 
     steps:
       - uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
 
   test-watch-octopus-deploy-task:
     if: false
-    runs-on: self-hosted
+    runs-on: ${{ github.repository_owner}}
 
     permissions:
       contents: read
