@@ -16,7 +16,7 @@ jobs:
     needs:
       - test
 
-    runs-on: ${{ github.repository_owner}}
+    runs-on: ${{ github.repository_owner }}
 
     concurrency:
       group: release
