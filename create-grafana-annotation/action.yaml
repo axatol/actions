@@ -1,0 +1,81 @@
+name: Create Grafana Annotation
+description: Create an annotation in Grafana
+
+inputs:
+  grafana-url:
+    description: URL of the Grafana instance
+    required: true
+
+  api-key:
+    description: Grafana API key with permissions to create annotations
+    required: true
+
+  text:
+    description: Text content of the annotation
+    required: true
+
+  time:
+    description: Timestamp for the the annotation (in epoch milliseconds)
+    required: false
+
+  time-end:
+    description: Timestamp to create a region annotation (in epoch milliseconds)
+    required: false
+
+  dashboard-uid:
+    description: UID of the Grafana dashboard where the annotation will be added
+    required: false
+
+  panel-id:
+    description: ID of the panel within the dashboard
+    required: false
+
+  tags:
+    description: Comma-separated list of tags for the annotation
+    required: false
+
+outputs:
+  annotation-id:
+    description: ID of the created annotation
+    value: ${{ steps.create-annotation.outputs.annotation-id }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: payload
+      shell: bash
+      run: |
+        payload='{
+          "time": ${{ inputs.time }},
+          "text": "${{ inputs.text }}"
+        }'
+
+        if [ -n "${{ inputs.time-end }}" ]; then
+          payload=$(echo $payload | jq --argjson timeEnd ${{ inputs.time-end }} '. + {timeEnd: $timeEnd}')
+        fi
+
+        if [ -n "${{ inputs.dashboard-uid }}" ]; then
+          payload=$(echo $payload | jq --arg uid "${{ inputs.dashboard-uid }}" '. + {dashboardUid: $uid}')
+        fi
+
+        if [ -n "${{ inputs.panel-id }}" ]; then
+          payload=$(echo $payload | jq --argjson pid ${{ inputs.panel-id }} '. + {panelId: $pid}')
+        fi
+
+        echo "payload=$payload" >> $GITHUB_OUTPUT
+
+    - id: create-annotation
+      shell: bash
+      run: |
+        response=$(
+          curl "${{ inputs.grafana-url }}/api/annotations" \
+            --request POST \
+            --silent --show-error --fail --location \
+            --header "Content-Type: application/json" \
+            --header "Authorization: Bearer ${{ inputs.api-key }}" \
+            --data-raw '${{ steps.payload.outputs.payload }}'
+        )
+
+        annotation_id=$(echo $response | jq --raw-output '.id')
+        echo "annotation-id=$annotation_id" >> $GITHUB_OUTPUT
