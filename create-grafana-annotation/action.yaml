@@ -63,7 +63,11 @@ runs:
           payload=$(echo $payload | jq --argjson pid ${{ inputs.panel-id }} '. + {panelId: $pid}')
         fi
 
-        echo "payload=$payload" >> $GITHUB_OUTPUT
+        {
+          echo "payload<<EOF"
+          echo "$payload"
+          echo EOF
+        } >> $GITHUB_OUTPUT
 
     - id: create-annotation
       shell: bash
