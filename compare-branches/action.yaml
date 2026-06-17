@@ -64,7 +64,7 @@ runs:
         } >> $GITHUB_OUTPUT
 
     - id: parse
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       env:
         FILES: ${{ steps.diff.outputs.files }}
         FILTER_REGEX: ${{ inputs.filter-regex }}

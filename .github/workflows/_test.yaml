@@ -9,17 +9,18 @@ jobs:
     runs-on: ${{ github.repository_owner}}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           show-progress: false
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
       - run: |
-          npm --workspace=run-ts-script install
-          npm --workspace=run-ts-script run compile
+          npm install --global pnpm
+          pnpm install
+          pnpm --filter ./run-ts-script compile
 
       - name: Test inline JavaScript-compatible script
         uses: ./run-ts-script
@@ -57,7 +58,7 @@ jobs:
     runs-on: ${{ github.repository_owner}}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           show-progress: false
 
@@ -81,7 +82,7 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           show-progress: false
 
