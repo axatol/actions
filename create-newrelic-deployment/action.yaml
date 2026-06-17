@@ -13,22 +13,22 @@ inputs:
   guid:
     description: New Relic entity GUID
     required: false
-    default: ''
+    default: ""
 
   commit:
     description: Commit SHA
     required: false
-    default: ''
+    default: ""
 
   version:
     description: Release version
     required: false
-    default: ''
+    default: ""
 
   deployment-type:
     description: Deployment type
     required: false
 
 runs:
-  using: node20
+  using: node24
   main: index.js

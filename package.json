@@ -4,15 +4,8 @@
   "repository": "git@github.com:axatol/actions.git",
   "license": "MIT",
   "scripts": {
-    "compile": "npm --workspaces run --if-present compile",
-    "clean": "npm --workspaces run --if-present clean"
-  },
-  "workspaces": [
-    "create-newrelic-deployment",
-    "increment-semver",
-    "prune-ecr-repository",
-    "run-ts-script",
-    "search-new-relic-entity-guid",
-    "send-deployment-notification"
-  ]
+    "compile": "pnpm --recursive run --if-present compile",
+    "stage": "pnpm --recursive run --if-present stage",
+    "clean": "pnpm --recursive run --if-present clean"
+  }
 }

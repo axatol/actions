@@ -1,0 +1,23 @@
+packages:
+  - ./create-newrelic-deployment
+  - ./increment-semver
+  - ./prune-ecr-repository
+  - ./run-ts-script
+  - ./search-new-relic-entity-guid
+  - ./send-deployment-notification"
+
+catalog:
+  "@actions/core": ^3.0.1
+  "@actions/exec": ^3.0.0
+  "@actions/github": ^9.1.1
+  "@actions/glob": ^0.7.0
+  "@actions/http-client": ^4.0.1
+  "@actions/io": ^3.0.2
+  "@aws-sdk/client-ecr-public": ^3.282.0
+  "@octokit/plugin-request-log": ^6.0.0
+  "@types/node": ^25.9.3
+  "esbuild": ^0.28.1
+  "node-fetch": ^3.3.2
+  "typescript": ^6.0.3
+
+minimumReleaseAge: 10080 # 7 days

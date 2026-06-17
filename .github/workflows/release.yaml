@@ -22,7 +22,7 @@ jobs:
       group: release
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           ref: release
           fetch-depth: 0
@@ -36,20 +36,20 @@ jobs:
         run: |
           git merge --strategy-option theirs --no-ff origin/master
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install --global pnpm
+          pnpm install
 
       - name: Compile actions
-        run: npm run compile
+        run: pnpm run compile
 
       - name: Stage release assets
-        run: |
-          workspaces=$( jq --raw-output --monochrome-output '.workspaces[]' ./package.json )
-          for workspace in $workspaces; do git add --force "$workspace/index.js"; done
+        run: pnpm run stage
 
       - name: Release assets
         run: |
