@@ -1,0 +1,19 @@
+{
+  "name": "@actions/get-ssm-parameters-by-path",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "compile": "esbuild --bundle --minify --sourcemap --platform=node --target=node20 --outfile=./index.js ./index.ts",
+    "stage": "git add --force ./index.js ./index.js.map",
+    "clean": "rm -rf ./node_modules ./index.js ./index.js.map"
+  },
+  "dependencies": {
+    "@actions/core": "catalog:",
+    "@aws-sdk/client-ssm": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "esbuild": "catalog:",
+    "typescript": "catalog:"
+  }
+}

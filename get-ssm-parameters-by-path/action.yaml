@@ -1,0 +1,26 @@
+name: Get ssm parameters by path
+description: >-
+  Get and obscures all SSM parameters at a given path, then exposes them as environment variables.
+  Requires AWS credentials to be preconfigured.
+
+inputs:
+  region:
+    description: AWS region to operate in
+    required: false
+  path:
+    description: Path to retrieve
+    required: true
+  prefix:
+    description: Optional text to prefix the secret name with
+    default: ""
+  recursive:
+    description: Whether or not to retrieve nested parameters
+    default: "false"
+
+outputs:
+  parameters:
+    description: Array of all parameters as objects containing prefixed name, original path, and value
+
+runs:
+  using: node24
+  main: index.js
